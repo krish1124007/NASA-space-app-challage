@@ -10,20 +10,20 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js"></script>
   <style>
     :root {
-      --bg-primary: #0a0e14;
-      --bg-secondary: #0f161c;
-      --bg-tertiary: #141e26;
-      --accent-primary: #00d4ff;
-      --accent-secondary: #00b8cc;
-      --accent-tertiary: #0095b3;
+      --bg-primary: #0a0e17;
+      --bg-secondary: #0f1624;
+      --bg-tertiary: #141e2e;
+      --accent-primary: #00a8ff;
+      --accent-secondary: #0097e6;
+      --accent-tertiary: #0078c4;
       --text-primary: #e6f1ff;
-      --text-secondary: #a8c7fa;
+      --text-secondary: #b0c8e6;
       --text-muted: #7a8ca5;
       --success: #00e676;
       --warning: #ffab00;
       --danger: #ff5252;
-      --card-radius: 12px;
-      --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --card-radius: 8px;
+      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       --transition: all 0.3s ease;
       --glass: rgba(255, 255, 255, 0.05);
     }
@@ -40,11 +40,12 @@
       color: var(--text-primary);
       line-height: 1.6;
       overflow-x: hidden;
+      font-weight: 400;
     }
 
     #app {
       display: grid;
-      grid-template-columns: 280px 1fr 320px;
+      grid-template-columns: 300px 1fr 340px;
       grid-template-rows: 1fr auto;
       gap: 16px;
       padding: 16px;
@@ -64,7 +65,7 @@
       flex-direction: column;
       gap: 20px;
       box-shadow: var(--card-shadow);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       transition: var(--transition);
     }
 
@@ -95,9 +96,7 @@
     .sidebar-title {
       font-size: 18px;
       font-weight: 700;
-      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--accent-primary);
     }
 
     .toggle-sidebar {
@@ -115,7 +114,7 @@
 
     .card {
       background: var(--bg-tertiary);
-      border-radius: 10px;
+      border-radius: var(--card-radius);
       padding: 16px;
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
@@ -148,7 +147,7 @@
     .form-input {
       width: 100%;
       padding: 10px 12px;
-      border-radius: 8px;
+      border-radius: 6px;
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text-primary);
@@ -159,7 +158,7 @@
     .form-input:focus {
       outline: none;
       border-color: var(--accent-primary);
-      box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+      box-shadow: 0 0 0 2px rgba(0, 168, 255, 0.2);
     }
 
     .input-group {
@@ -169,7 +168,7 @@
 
     .btn {
       padding: 10px 16px;
-      border-radius: 8px;
+      border-radius: 6px;
       border: none;
       font-weight: 600;
       cursor: pointer;
@@ -178,11 +177,12 @@
       gap: 8px;
       transition: var(--transition);
       justify-content: center;
+      font-size: 14px;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-      color: #001e2b;
+      background: var(--accent-primary);
+      color: white;
     }
 
     .btn-secondary {
@@ -192,8 +192,8 @@
     }
 
     .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 212, 255, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 168, 255, 0.3);
     }
 
     .btn-full {
@@ -234,7 +234,7 @@
       border-radius: var(--card-radius);
       overflow: hidden;
       box-shadow: var(--card-shadow);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -280,7 +280,7 @@
       border-radius: var(--card-radius);
       padding: 16px;
       box-shadow: var(--card-shadow);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       height: 280px;
       display: flex;
       flex-direction: column;
@@ -305,7 +305,7 @@
 
     .console {
       background: rgba(0, 0, 0, 0.4);
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 12px;
       flex: 1;
       overflow-y: auto;
@@ -366,7 +366,7 @@
       border-radius: var(--card-radius);
       padding: 16px;
       box-shadow: var(--card-shadow);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .stats-grid {
@@ -378,7 +378,7 @@
 
     .stat-card {
       background: var(--bg-tertiary);
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 12px;
       text-align: center;
     }
@@ -399,7 +399,7 @@
       border-radius: var(--card-radius);
       padding: 16px;
       box-shadow: var(--card-shadow);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -429,7 +429,7 @@
 
     .ai-body {
       background: rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 12px;
       flex: 1;
       overflow-y: auto;
@@ -445,9 +445,9 @@
     }
 
     .ai-user {
-      background: rgba(0, 212, 255, 0.1);
+      background: rgba(0, 168, 255, 0.1);
       margin-left: auto;
-      border: 1px solid rgba(0, 212, 255, 0.2);
+      border: 1px solid rgba(0, 168, 255, 0.2);
     }
 
     .ai-bot {
@@ -463,7 +463,7 @@
     .voice-btn {
       width: 40px;
       height: 40px;
-      border-radius: 8px;
+      border-radius: 6px;
       background: var(--glass);
       border: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
@@ -474,7 +474,7 @@
     }
 
     .voice-btn:hover {
-      background: rgba(0, 212, 255, 0.1);
+      background: rgba(0, 168, 255, 0.1);
       border-color: var(--accent-primary);
     }
 
@@ -500,7 +500,7 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: var(--card-shadow);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       font-size: 12px;
       color: var(--text-muted);
     }
@@ -531,7 +531,7 @@
       border-radius: var(--card-radius);
       padding: 16px;
       box-shadow: var(--card-shadow);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       margin-top: 16px;
     }
 
@@ -544,7 +544,7 @@
 
     .method-card {
       background: var(--bg-tertiary);
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 12px;
       text-align: center;
       cursor: pointer;
@@ -552,8 +552,8 @@
     }
 
     .method-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       border-color: var(--accent-primary);
     }
 
@@ -848,9 +848,6 @@
   </div>
 
   <script>
-    // Fix for THREE.OrbitControls import issue
-    // We're using the correct CDN that provides OrbitControls as a global
-
     // ---------- Three.js Scene Setup ----------
     const container = document.getElementById('three-container');
     const scene = new THREE.Scene();
@@ -863,41 +860,11 @@
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
-    // Fix for OrbitControls - check if it's available
+    // OrbitControls
     let controls;
     if (typeof THREE.OrbitControls !== 'undefined') {
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
-    } else {
-      console.warn('OrbitControls not available. Using basic camera controls.');
-      // Implement basic controls if OrbitControls is not available
-      let isMouseDown = false;
-      let previousMousePosition = { x: 0, y: 0 };
-      
-      renderer.domElement.addEventListener('mousedown', (e) => {
-        isMouseDown = true;
-        previousMousePosition = { x: e.clientX, y: e.clientY };
-      });
-      
-      renderer.domElement.addEventListener('mouseup', () => {
-        isMouseDown = false;
-      });
-      
-      renderer.domElement.addEventListener('mousemove', (e) => {
-        if (!isMouseDown) return;
-        
-        const deltaX = e.clientX - previousMousePosition.x;
-        const deltaY = e.clientY - previousMousePosition.y;
-        
-        camera.position.x -= deltaX * 0.5;
-        camera.position.y += deltaY * 0.5;
-        
-        previousMousePosition = { x: e.clientX, y: e.clientY };
-      });
-      
-      renderer.domElement.addEventListener('wheel', (e) => {
-        camera.position.z += e.deltaY * 0.1;
-      });
     }
 
     // Lighting
@@ -1040,9 +1007,10 @@
     // ---------- Application State & Data Management ----------
     let asteroidData = null;
     let isSimulationRunning = true;
+    const BACKEND_URL = 'http://localhost:5000'; // Update with your backend URL
 
-    // Load asteroid data from localStorage or use default
-    function loadAsteroidData() {
+    // Load asteroid data from backend
+    async function loadAsteroidData() {
       const asteroidID = localStorage.getItem("astroidID") || "3542519";
       logToConsole(`Loading asteroid data for ID: ${asteroidID}`, 'info');
       
@@ -1051,460 +1019,468 @@
       document.getElementById('data-status-text').textContent = 'Loading...';
       document.getElementById('load-data').innerHTML = '<div class="loading"></div> <span class="btn-text">Loading...</span>';
       
-      // Simulate API call to backend
-      setTimeout(() => {
-        // Mock data - in a real app, this would come from your backend API
-        asteroidData = {
-          id: asteroidID,
-          name: `Asteroid ${asteroidID}`,
-          diameter: 320,
-          velocity: 15.2,
-          density: 2600,
-          composition: "Stony",
-          hazard: "Moderate"
-        };
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/neo/${asteroidID}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        asteroidData = await response.json();
         
         // Update UI with loaded data
-        document.getElementById('size-m').value = asteroidData.diameter;
-        document.getElementById('vel-kms').value = asteroidData.velocity;
-        document.getElementById('density').value = asteroidData.density;
+        document.getElementById('size-m').value = asteroidData.diameter || 320;
+        document.getElementById('vel-kms').value = asteroidData.velocity || 15.2;
+        document.getElementById('density').value = asteroidData.density || 2600;
         
         document.getElementById('data-status').className = 'status-dot';
         document.getElementById('data-status-text').textContent = 'Loaded';
         document.getElementById('load-data').innerHTML = '<i class="fas fa-sync-alt"></i> <span class="btn-text">Refresh Data</span>';
         
-        logToConsole(`Asteroid data loaded: ${asteroidData.name}`, 'info');
-        addAIMessage(`I've loaded data for ${asteroidData.name}. It's a ${asteroidData.diameter}m diameter asteroid traveling at ${asteroidData.velocity} km/s. Based on its size and velocity, this is classified as a ${asteroidData.hazard.toLowerCase()} impact hazard.`);
+        logToConsole(`Asteroid data loaded: ${asteroidData.name || `Asteroid ${asteroidID}`}`, 'info');
+        updateAsteroidVisualization();
         
-        // Update asteroid size in visualization
-        createAsteroid(asteroidData.diameter / 60); // Scale for visualization
-      }, 2000);
-    }
-
-    // Check backend status
-    function checkBackendStatus() {
-      // Simulate checking backend connection
-      setTimeout(() => {
-        document.getElementById('backend-status').className = 'status-dot';
-        document.getElementById('backend-status-text').textContent = 'Connected';
+      } catch (error) {
+        console.error('Error loading asteroid data:', error);
+        document.getElementById('data-status').className = 'status-dot error';
+        document.getElementById('data-status-text').textContent = 'Error';
+        document.getElementById('load-data').innerHTML = '<i class="fas fa-sync-alt"></i> <span class="btn-text">Retry</span>';
         
-        document.getElementById('data-stream-status').className = 'status-dot';
-        document.getElementById('data-stream-status-text').textContent = 'Active';
-        
-        document.getElementById('footer-status').className = 'status-dot';
-        document.getElementById('status').textContent = 'Ready';
-        
-        logToConsole('Backend services connected successfully', 'info');
-      }, 1500);
-    }
-
-    // ---------- UI Interactions ----------
-    document.getElementById('play-pause').addEventListener('click', function() {
-      isSimulationRunning = !isSimulationRunning;
-      const icon = this.querySelector('i');
-      if (isSimulationRunning) {
-        icon.classList.remove('fa-play');
-        icon.classList.add('fa-pause');
-        this.innerHTML = '<i class="fas fa-pause"></i> Pause';
-        logToConsole('Simulation resumed', 'info');
-      } else {
-        icon.classList.remove('fa-pause');
-        icon.classList.add('fa-play');
-        this.innerHTML = '<i class="fas fa-play"></i> Play';
-        logToConsole('Simulation paused', 'info');
+        logToConsole(`Failed to load asteroid data: ${error.message}`, 'error');
       }
-    });
+    }
 
-    document.getElementById('reset-view').addEventListener('click', function() {
-      camera.position.set(0, 50, 220);
-      if (controls) controls.reset();
-      logToConsole('Camera view reset', 'info');
-    });
+    // Update asteroid visualization based on data
+    function updateAsteroidVisualization() {
+      if (!asteroidData) return;
+      
+      const size = asteroidData.diameter || 320;
+      // Scale down for visualization
+      const visualSize = Math.min(Math.max(size / 100, 2), 20);
+      createAsteroid(visualSize);
+      
+      logToConsole(`Updated asteroid visualization: ${visualSize.toFixed(1)} units`, 'info');
+    }
 
-    document.getElementById('clear-console').addEventListener('click', function() {
+    // Run impact simulation
+    async function runSimulation() {
+      const size = parseFloat(document.getElementById('size-m').value) || 320;
+      const velocity = parseFloat(document.getElementById('vel-kms').value) || 15.2;
+      const density = parseFloat(document.getElementById('density').value) || 2600;
+      const impactAngle = parseFloat(document.getElementById('impact-angle').value) || 45;
+      const lat = parseFloat(document.getElementById('impact-lat').value) || 34.05;
+      const lon = parseFloat(document.getElementById('impact-lon').value) || -118.25;
+      
+      logToConsole(`Starting simulation: ${size}m, ${velocity}km/s, ${density}kg/m³`, 'info');
+      
+      // Show simulation running state
+      document.getElementById('simulation-status').className = 'status-dot warning';
+      document.getElementById('simulation-status-text').textContent = 'Running...';
+      document.getElementById('simulate-btn').innerHTML = '<div class="loading"></div> <span class="btn-text">Simulating...</span>';
+      
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/simulate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            size: size,
+            velocity: velocity,
+            density: density,
+            impact_angle: impactAngle,
+            lat: lat,
+            lon: lon
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const simulationResults = await response.json();
+        
+        // Update UI with simulation results
+        updateSimulationResults(simulationResults);
+        
+        document.getElementById('simulation-status').className = 'status-dot';
+        document.getElementById('simulation-status-text').textContent = 'Complete';
+        document.getElementById('simulate-btn').innerHTML = '<i class="fas fa-bolt"></i> <span class="btn-text">Simulate Impact</span>';
+        
+        logToConsole(`Simulation completed successfully`, 'info');
+        
+      } catch (error) {
+        console.error('Error running simulation:', error);
+        document.getElementById('simulation-status').className = 'status-dot error';
+        document.getElementById('simulation-status-text').textContent = 'Error';
+        document.getElementById('simulate-btn').innerHTML = '<i class="fas fa-bolt"></i> <span class="btn-text">Retry Simulation</span>';
+        
+        logToConsole(`Simulation failed: ${error.message}`, 'error');
+      }
+    }
+
+    // Update UI with simulation results
+    function updateSimulationResults(results) {
+      // Update impact stats
+      if (results.energy) {
+        document.getElementById('energy').textContent = formatEnergy(results.energy);
+      }
+      if (results.crater_diameter) {
+        document.getElementById('crater').textContent = formatDistance(results.crater_diameter);
+      }
+      if (results.seismic_magnitude) {
+        document.getElementById('magnitude').textContent = `M ${results.seismic_magnitude.toFixed(1)}`;
+      }
+      if (results.tsunami_height) {
+        document.getElementById('tsunami').textContent = formatDistance(results.tsunami_height);
+      }
+      
+      // Update charts
+      updateEnergyChart(results);
+      
+      // Add AI analysis
+      addAIAnalysis(results);
+    }
+
+    // Format energy for display
+    function formatEnergy(energy) {
+      if (energy >= 1e18) {
+        return (energy / 1e18).toFixed(2) + ' GT';
+      } else if (energy >= 1e15) {
+        return (energy / 1e15).toFixed(2) + ' MT';
+      } else {
+        return (energy / 1e12).toFixed(2) + ' kT';
+      }
+    }
+
+    // Format distance for display
+    function formatDistance(distance) {
+      if (distance >= 1000) {
+        return (distance / 1000).toFixed(1) + ' km';
+      } else {
+        return distance.toFixed(0) + ' m';
+      }
+    }
+
+    // Update energy chart with simulation results
+    function updateEnergyChart(results) {
+      const ctx = document.getElementById('energyChart').getContext('2d');
+      
+      // Destroy existing chart if it exists
+      if (window.energyChart) {
+        window.energyChart.destroy();
+      }
+      
+      window.energyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Impact Energy', 'Seismic Energy', 'Thermal Radiation', 'Ejecta'],
+          datasets: [{
+            label: 'Energy Distribution',
+            data: [
+              results.energy || 1e15,
+              results.seismic_energy || 1e13,
+              results.thermal_energy || 1e14,
+              results.ejecta_energy || 1e13
+            ],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(75, 192, 192, 0.7)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              type: 'logarithmic',
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Energy (Joules)'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  let value = context.raw;
+                  if (value >= 1e18) {
+                    return (value / 1e18).toFixed(2) + ' GT TNT';
+                  } else if (value >= 1e15) {
+                    return (value / 1e15).toFixed(2) + ' MT TNT';
+                  } else {
+                    return (value / 1e12).toFixed(2) + ' kT TNT';
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Add AI analysis of simulation results
+    function addAIAnalysis(results) {
+      const aiChat = document.getElementById('ai-chat');
+      const energy = results.energy || 0;
+      
+      let analysis = '';
+      if (energy < 1e12) {
+        analysis = "This is a small impact event, comparable to a large conventional bomb. Local damage would be limited to the immediate impact area.";
+      } else if (energy < 1e15) {
+        analysis = "This impact would release energy comparable to a nuclear weapon. Significant local destruction would occur, with potential regional effects.";
+      } else if (energy < 1e18) {
+        analysis = "This is a major impact event with regional to continental consequences. Widespread destruction, firestorms, and potential climate effects would occur.";
+      } else {
+        analysis = "This is a catastrophic impact event with global consequences. Mass extinction-level event with long-term climate changes.";
+      }
+      
+      const message = document.createElement('div');
+      message.className = 'ai-message ai-bot';
+      message.innerHTML = `<strong>Impact Analysis:</strong> ${analysis}`;
+      aiChat.appendChild(message);
+      aiChat.scrollTop = aiChat.scrollHeight;
+    }
+
+    // Log messages to console
+    function logToConsole(message, type = 'info') {
+      const console = document.getElementById('console');
+      const now = new Date();
+      const timeString = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
+      
+      const line = document.createElement('div');
+      line.className = 'console-line';
+      
+      const timeSpan = document.createElement('span');
+      timeSpan.className = 'console-time';
+      timeSpan.textContent = timeString;
+      
+      const messageSpan = document.createElement('span');
+      messageSpan.className = `console-${type}`;
+      messageSpan.textContent = ` ${message}`;
+      
+      line.appendChild(timeSpan);
+      line.appendChild(messageSpan);
+      console.appendChild(line);
+      console.scrollTop = console.scrollHeight;
+    }
+
+    // ---------- UI Event Handlers ----------
+    document.getElementById('load-data').addEventListener('click', loadAsteroidData);
+    document.getElementById('simulate-btn').addEventListener('click', runSimulation);
+    document.getElementById('clear-console').addEventListener('click', () => {
       document.getElementById('console').innerHTML = '';
       logToConsole('Console cleared', 'info');
     });
-
-    // Toggle sidebar collapse
+    
+    document.getElementById('play-pause').addEventListener('click', function() {
+      isSimulationRunning = !isSimulationRunning;
+      this.innerHTML = isSimulationRunning ? 
+        '<i class="fas fa-pause"></i> Pause' : 
+        '<i class="fas fa-play"></i> Play';
+      logToConsole(`Simulation ${isSimulationRunning ? 'resumed' : 'paused'}`, 'info');
+    });
+    
+    document.getElementById('reset-view').addEventListener('click', function() {
+      if (controls) {
+        controls.reset();
+      }
+      logToConsole('View reset', 'info');
+    });
+    
+    document.getElementById('capture-view').addEventListener('click', function() {
+      // In a real implementation, this would capture the current view
+      logToConsole('View captured (saved to gallery)', 'info');
+    });
+    
     document.getElementById('toggle-sidebar').addEventListener('click', function() {
       const sidebar = document.getElementById('sidebar');
-      const icon = this.querySelector('i');
-      
       sidebar.classList.toggle('collapsed');
-      if (sidebar.classList.contains('collapsed')) {
-        icon.classList.remove('fa-chevron-left');
-        icon.classList.add('fa-chevron-right');
-      } else {
-        icon.classList.remove('fa-chevron-right');
-        icon.classList.add('fa-chevron-left');
-      }
+      this.innerHTML = sidebar.classList.contains('collapsed') ? 
+        '<i class="fas fa-chevron-right"></i>' : 
+        '<i class="fas fa-chevron-left"></i>';
     });
-
-    // Toggle right panel collapse
+    
     document.getElementById('toggle-right-panel').addEventListener('click', function() {
       const rightPanel = document.getElementById('right-panel');
-      const icon = this.querySelector('i');
-      
       rightPanel.classList.toggle('collapsed');
-      if (rightPanel.classList.contains('collapsed')) {
-        icon.classList.remove('fa-chevron-right');
-        icon.classList.add('fa-chevron-left');
-        this.innerHTML = '<i class="fas fa-chevron-left"></i> Toggle Panel';
-      } else {
-        icon.classList.remove('fa-chevron-left');
-        icon.classList.add('fa-chevron-right');
-        this.innerHTML = '<i class="fas fa-chevron-right"></i> Toggle Panel';
-      }
+      this.innerHTML = rightPanel.classList.contains('collapsed') ? 
+        '<i class="fas fa-chevron-left"></i> Toggle Panel' : 
+        '<i class="fas fa-chevron-right"></i> Toggle Panel';
     });
-
-    // Fullscreen functionality
+    
     document.getElementById('fullscreen-btn').addEventListener('click', function() {
-      const simulationContainer = document.querySelector('.simulation-container');
-      
-      if (!document.fullscreenElement) {
-        if (simulationContainer.requestFullscreen) {
-          simulationContainer.requestFullscreen();
-        } else if (simulationContainer.webkitRequestFullscreen) {
-          simulationContainer.webkitRequestFullscreen();
-        } else if (simulationContainer.msRequestFullscreen) {
-          simulationContainer.msRequestFullscreen();
-        }
-        logToConsole('Entered fullscreen mode', 'info');
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-        logToConsole('Exited fullscreen mode', 'info');
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen();
+      }
+      logToConsole('Entered fullscreen mode', 'info');
+    });
+    
+    document.getElementById('export-data').addEventListener('click', function() {
+      // In a real implementation, this would export simulation data
+      logToConsole('Data exported to CSV', 'info');
+    });
+    
+    document.getElementById('deflect-btn').addEventListener('click', function() {
+      logToConsole('Deflection simulation initiated', 'info');
+    });
+    
+    // Protection method buttons
+    document.getElementById('kinetic-impactor').addEventListener('click', function() {
+      logToConsole('Kinetic impactor deflection method selected', 'info');
+    });
+    
+    document.getElementById('gravity-tractor').addEventListener('click', function() {
+      logToConsole('Gravity tractor deflection method selected', 'info');
+    });
+    
+    document.getElementById('nuclear-deflection').addEventListener('click', function() {
+      logToConsole('Nuclear deflection method selected', 'info');
+    });
+    
+    // AI chat functionality
+    document.getElementById('ask-btn').addEventListener('click', function() {
+      const question = document.getElementById('q-input').value.trim();
+      if (question) {
+        const aiChat = document.getElementById('ai-chat');
+        
+        // Add user message
+        const userMessage = document.createElement('div');
+        userMessage.className = 'ai-message ai-user';
+        userMessage.textContent = question;
+        aiChat.appendChild(userMessage);
+        
+        // Clear input
+        document.getElementById('q-input').value = '';
+        
+        // Simulate AI response
+        setTimeout(() => {
+          const botMessage = document.createElement('div');
+          botMessage.className = 'ai-message ai-bot';
+          botMessage.textContent = getAIResponse(question);
+          aiChat.appendChild(botMessage);
+          aiChat.scrollTop = aiChat.scrollHeight;
+        }, 1000);
       }
     });
-
-    // Voice recording simulation
+    
+    // Voice input functionality
+    let isRecording = false;
     document.getElementById('voice-btn').addEventListener('click', function() {
-      const icon = this.querySelector('i');
-      if (icon.classList.contains('fa-microphone')) {
-        icon.classList.remove('fa-microphone');
-        icon.classList.add('fa-stop');
-        this.classList.add('recording');
-        logToConsole('Voice recording started...', 'info');
-        
-        // Simulate processing after 3 seconds
-        setTimeout(() => {
-          icon.classList.remove('fa-stop');
-          icon.classList.add('fa-microphone');
-          this.classList.remove('recording');
-          addAIMessage("Based on your query, I've analyzed the current trajectory. The asteroid has a 12% chance of impact based on current parameters. Would you like me to run a deflection simulation?");
-          logToConsole('Voice query processed', 'info');
-        }, 3000);
+      isRecording = !isRecording;
+      this.classList.toggle('recording', isRecording);
+      this.innerHTML = isRecording ? 
+        '<i class="fas fa-stop"></i>' : 
+        '<i class="fas fa-microphone"></i>';
+      
+      if (isRecording) {
+        logToConsole('Voice recording started', 'info');
       } else {
-        icon.classList.remove('fa-stop');
-        icon.classList.add('fa-microphone');
-        this.classList.remove('recording');
         logToConsole('Voice recording stopped', 'info');
       }
     });
 
-    // AI Chat functionality
-    document.getElementById('ask-btn').addEventListener('click', function() {
-      const question = document.getElementById('q-input').value.trim();
-      if (!question) return;
-      
-      addUserMessage(question);
-      document.getElementById('q-input').value = '';
-      
-      // Simulate AI thinking
-      setTimeout(() => {
-        const responses = [
-          "Based on the current simulation parameters, the impact would release approximately 4.2×10¹⁵ joules of energy, equivalent to 1 megaton of TNT.",
-          "The asteroid's current trajectory shows a close approach in 2038. Deflection maneuvers would need to be executed at least 10 years prior for maximum effectiveness.",
-          "I'm detecting that increasing the asteroid's velocity by 15% would significantly alter its trajectory, reducing impact probability from 18% to 3%.",
-          "The current size estimate suggests a crater diameter of approximately 2.4 kilometers. This would cause regional devastation but not global extinction.",
-          "Based on the impact location you've selected, coastal areas within 200km would experience tsunami waves up to 12 meters in height."
-        ];
-        
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        addAIMessage(randomResponse);
-      }, 1000 + Math.random() * 2000);
-    });
-
-    // Enter key for AI chat
-    document.getElementById('q-input').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        document.getElementById('ask-btn').click();
-      }
-    });
-
-    // Simulate impact button
-    document.getElementById('simulate-btn').addEventListener('click', function() {
-      if (!asteroidData) {
-        logToConsole('Please load asteroid data first', 'warning');
-        return;
-      }
-      
-      logToConsole('Impact simulation started...', 'info');
-      
-      // Show loading state
-      const originalText = this.innerHTML;
-      this.innerHTML = '<div class="loading"></div> <span class="btn-text">Simulating...</span>';
-      this.disabled = true;
-      
-      // Get impact parameters
-      const size = parseFloat(document.getElementById('size-m').value) || asteroidData.diameter;
-      const velocity = parseFloat(document.getElementById('vel-kms').value) || asteroidData.velocity;
-      const density = parseFloat(document.getElementById('density').value) || asteroidData.density;
-      const lat = parseFloat(document.getElementById('impact-lat').value) || 34.05;
-      const lon = parseFloat(document.getElementById('impact-lon').value) || -118.25;
-      const angle = parseFloat(document.getElementById('impact-angle').value) || 45;
-      
-      // Simulate processing - in a real app, this would call your backend API
-      setTimeout(() => {
-        this.innerHTML = originalText;
-        this.disabled = false;
-        
-        // Calculate impact effects (simplified)
-        const energy = calculateImpactEnergy(size, velocity, density);
-        const crater = calculateCraterSize(size, velocity, density, angle);
-        const magnitude = calculateSeismicMagnitude(energy);
-        const tsunami = calculateTsunamiHeight(energy, lat, lon);
-        
-        // Update stats with calculated values
-        document.getElementById('energy').textContent = formatEnergy(energy);
-        document.getElementById('crater').textContent = crater.toFixed(1) + ' km';
-        document.getElementById('magnitude').textContent = magnitude.toFixed(1);
-        document.getElementById('tsunami').textContent = tsunami.toFixed(0) + ' m';
-        
-        logToConsole('Impact simulation completed successfully', 'info');
-        addAIMessage(`Impact simulation completed. The results show a ${crater.toFixed(1)} km crater, seismic magnitude of ${magnitude.toFixed(1)}, and tsunami waves up to ${tsunami.toFixed(0)} meters. Energy released: ${formatEnergy(energy)}.`);
-        
-        // Update chart
-        updateEnergyChart(energy, crater, magnitude, tsunami);
-        
-        // Update simulation status
-        document.getElementById('simulation-status').className = 'status-dot';
-        document.getElementById('simulation-status-text').textContent = 'Completed';
-      }, 2000);
-    });
-
-    // Load data button
-    document.getElementById('load-data').addEventListener('click', function() {
-      loadAsteroidData();
-    });
-
-    // Deflect button
-    document.getElementById('deflect-btn').addEventListener('click', function() {
-      if (!asteroidData) {
-        logToConsole('Please load asteroid data first', 'warning');
-        return;
-      }
-      
-      logToConsole('Initiating deflection simulation...', 'info');
-      
-      // Show loading state
-      const originalText = this.innerHTML;
-      this.innerHTML = '<div class="loading"></div>';
-      this.disabled = true;
-      
-      // Simulate processing
-      setTimeout(() => {
-        this.innerHTML = originalText;
-        this.disabled = false;
-        
-        logToConsole('Deflection simulation completed. Impact probability reduced by 72%.', 'info');
-        addAIMessage("Deflection simulation successful! Using a gravity tractor approach, impact probability has been reduced from 18% to 5%. The maneuver would need to be executed in 2032 for optimal effect.");
-      }, 2500);
-    });
-
-    // Protection method buttons
-    document.getElementById('kinetic-impactor').addEventListener('click', function() {
-      logToConsole('Kinetic impactor deflection method selected', 'info');
-      addAIMessage("The kinetic impactor method involves striking the asteroid with a high-speed projectile to alter its trajectory. This is the method used by NASA's DART mission. For this asteroid, we'd need an impactor mass of approximately 500 kg traveling at 6 km/s.");
-    });
-
-    document.getElementById('gravity-tractor').addEventListener('click', function() {
-      logToConsole('Gravity tractor deflection method selected', 'info');
-      addAIMessage("The gravity tractor method uses a spacecraft to fly near the asteroid, using its gravitational pull to slowly alter the asteroid's path over time. This method requires early detection but is very precise. For this asteroid, we'd need a 20-ton spacecraft operating for 10 years.");
-    });
-
-    document.getElementById('nuclear-deflection').addEventListener('click', function() {
-      logToConsole('Nuclear deflection method selected', 'info');
-      addAIMessage("Nuclear deflection involves detonating a nuclear device near the asteroid surface to vaporize material and create thrust. This is the most powerful method but carries political and safety concerns. For this asteroid, a 1-megaton device detonated 100m from the surface would be sufficient.");
-    });
-
-    // Export data button
-    document.getElementById('export-data').addEventListener('click', function() {
-      logToConsole('Exporting simulation data...', 'info');
-      // In a real app, this would generate and download a data file
-      setTimeout(() => {
-        logToConsole('Simulation data exported successfully', 'info');
-      }, 1000);
-    });
-
-    // ---------- Utility Functions ----------
-    function logToConsole(message, type = 'info') {
-      const consoleEl = document.getElementById('console');
-      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      const className = type === 'info' ? 'console-info' : 
-                        type === 'warning' ? 'console-warning' : 
-                        type === 'error' ? 'console-error' : 'console-info';
-      
-      const line = document.createElement('div');
-      line.className = 'console-line';
-      line.innerHTML = `<span class="console-time">[${time}]</span> <span class="${className}">${message}</span>`;
-      
-      consoleEl.appendChild(line);
-      consoleEl.scrollTop = consoleEl.scrollHeight;
-    }
-
-    function addUserMessage(message) {
-      const chatEl = document.getElementById('ai-chat');
-      const messageEl = document.createElement('div');
-      messageEl.className = 'ai-message ai-user';
-      messageEl.textContent = message;
-      chatEl.appendChild(messageEl);
-      chatEl.scrollTop = chatEl.scrollHeight;
-    }
-
-    function addAIMessage(message) {
-      const chatEl = document.getElementById('ai-chat');
-      const messageEl = document.createElement('div');
-      messageEl.className = 'ai-message ai-bot';
-      messageEl.textContent = message;
-      chatEl.appendChild(messageEl);
-      chatEl.scrollTop = chatEl.scrollHeight;
-    }
-
-    // Impact calculation functions (simplified)
-    function calculateImpactEnergy(diameter, velocity, density) {
-      // Volume of sphere = (4/3) * π * r^3
-      const radius = diameter / 2;
-      const volume = (4/3) * Math.PI * Math.pow(radius, 3);
-      // Mass = density * volume
-      const mass = density * volume;
-      // Kinetic energy = 0.5 * m * v^2
-      // Convert velocity from km/s to m/s
-      const velocityMS = velocity * 1000;
-      return 0.5 * mass * Math.pow(velocityMS, 2);
-    }
-
-    function calculateCraterSize(diameter, velocity, density, angle) {
-      // Simplified crater diameter calculation
-      const energy = calculateImpactEnergy(diameter, velocity, density);
-      // Crater diameter in km (very simplified)
-      return Math.pow(energy, 1/3.4) / 10000;
-    }
-
-    function calculateSeismicMagnitude(energy) {
-      // Convert energy to seismic magnitude (simplified)
-      return Math.log10(energy) / 1.5 - 5.5;
-    }
-
-    function calculateTsunamiHeight(energy, lat, lon) {
-      // Very simplified tsunami height calculation
-      // In reality, this depends on many factors including ocean depth, coastline shape, etc.
-      const baseHeight = Math.pow(energy, 1/3) / 1e6;
-      // Add some randomness for demo purposes
-      return baseHeight * (0.8 + Math.random() * 0.4);
-    }
-
-    function formatEnergy(energy) {
-      if (energy >= 1e15) {
-        return (energy / 1e15).toFixed(1) + '×10¹⁵ J';
-      } else if (energy >= 1e12) {
-        return (energy / 1e12).toFixed(1) + '×10¹² J';
-      } else {
-        return energy.toExponential(2) + ' J';
-      }
-    }
-
-    // Initialize energy chart
-    const energyCtx = document.getElementById('energyChart').getContext('2d');
-    let energyChart = new Chart(energyCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Impact Energy', 'Crater Size', 'Seismic Mag', 'Tsunami Height'],
-        datasets: [{
-          label: 'Impact Effects',
-          data: [0, 0, 0, 0],
-          backgroundColor: [
-            'rgba(0, 212, 255, 0.7)',
-            'rgba(0, 184, 204, 0.7)',
-            'rgba(0, 149, 179, 0.7)',
-            'rgba(255, 171, 0, 0.7)'
-          ],
-          borderColor: [
-            'rgba(0, 212, 255, 1)',
-            'rgba(0, 184, 204, 1)',
-            'rgba(0, 149, 179, 1)',
-            'rgba(255, 171, 0, 1)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            grid: {
-              color: 'rgba(255, 255, 255, 0.1)'
-            },
-            ticks: {
-              color: 'rgba(255, 255, 255, 0.7)'
-            }
-          },
-          x: {
-            grid: {
-              display: false
-            },
-            ticks: {
-              color: 'rgba(255, 255, 255, 0.7)'
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            display: false
-          }
-        }
-      }
-    });
-
-    function updateEnergyChart(energy, crater, magnitude, tsunami) {
-      // Normalize values for the chart (0-100 scale)
-      const maxEnergy = 1e16; // 10^16 J as maximum for scaling
-      const maxCrater = 10; // 10 km as maximum for scaling
-      const maxMagnitude = 8; // 8 as maximum for scaling
-      const maxTsunami = 50; // 50 m as maximum for scaling
-      
-      const normalizedData = [
-        Math.min(100, (energy / maxEnergy) * 100),
-        Math.min(100, (crater / maxCrater) * 100),
-        Math.min(100, (magnitude / maxMagnitude) * 100),
-        Math.min(100, (tsunami / maxTsunami) * 100)
+    // AI response generator (simplified)
+    function getAIResponse(question) {
+      const responses = [
+        "Based on the current simulation parameters, the impact would create a crater approximately 5km in diameter.",
+        "The energy released would be equivalent to about 150 megatons of TNT, similar to a large nuclear weapon.",
+        "For an asteroid of this size, deflection would require at least 10 years of advance warning.",
+        "The seismic effects would be felt up to 500km from the impact site, with potential magnitude 6.0+ earthquakes.",
+        "Tsunami waves could reach heights of 20 meters along nearby coastlines.",
+        "The atmospheric blast would shatter windows within a 100km radius of the impact."
       ];
       
-      energyChart.data.datasets[0].data = normalizedData;
-      energyChart.update();
+      return responses[Math.floor(Math.random() * responses.length)];
     }
 
-    // Initialize the application
-    window.addEventListener('DOMContentLoaded', () => {
-      logToConsole('AstroImpact Simulator initializing...', 'info');
+    // ---------- Initialization ----------
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize charts
+      const ctx = document.getElementById('energyChart').getContext('2d');
+      window.energyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Impact Energy', 'Seismic Energy', 'Thermal Radiation', 'Ejecta'],
+          datasets: [{
+            label: 'Energy Distribution',
+            data: [1e15, 1e13, 1e14, 1e13],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(75, 192, 192, 0.7)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              type: 'logarithmic',
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+      
+      // Load asteroid data on startup
       loadAsteroidData();
+      
+      // Check backend status
       checkBackendStatus();
       
-      // Initialize with some console messages
-      setTimeout(() => {
-        logToConsole('3D visualization engine ready', 'info');
-        logToConsole('AI analysis module activated', 'info');
-        logToConsole('Impact calculation models loaded', 'info');
-      }, 500);
+      // Update footer status
+      document.getElementById('footer-status').className = 'status-dot';
+      document.getElementById('status').textContent = 'Ready';
+      
+      logToConsole('AstroImpact Simulator initialized successfully', 'info');
     });
+
+    // Check backend connectivity
+    async function checkBackendStatus() {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/neo/3542519`);
+        if (response.ok) {
+          document.getElementById('backend-status').className = 'status-dot';
+          document.getElementById('backend-status-text').textContent = 'Connected';
+        } else {
+          throw new Error('Backend responded with error');
+        }
+      } catch (error) {
+        document.getElementById('backend-status').className = 'status-dot error';
+        document.getElementById('backend-status-text').textContent = 'Disconnected';
+        logToConsole('Backend connection failed', 'error');
+      }
+    }
   </script>
 </body>
 </html>

@@ -842,7 +842,7 @@
                 <!-- Simulation stats will be populated by JavaScript -->
             </div>
             <div class="simulation-controls">
-                <button class="simulation-button" id="start-simulation">Start Simulation</button>
+               <a href="./simulation.html"><button class="simulation-button" id="start-simulation">Start Simulation</button></a>
                 <button class="simulation-button" id="pause-simulation">Pause</button>
                 <button class="simulation-button" id="reset-simulation">Reset</button>
             </div>
@@ -1031,6 +1031,10 @@
             testCorsConnection();
         });
 
+        // startSimulationBtn.addEventListener("click",()=>{
+        //     let saveId = localStorage.setItem("id" , )
+        // })
+
         async function testCorsConnection() {
             try {
                 const testResponse = await fetch('http://127.0.0.1:5000/', {
@@ -1093,6 +1097,7 @@
 
                 // Check if the response contains an error
                 if (data.error) {
+                    console.log(data)
                     throw new Error(`NASA API Error: ${data.error}`);
                 }
 
@@ -1257,7 +1262,7 @@
         </div>
         <div class="asteroid-details">
             <div>
-                <div class="asteroid-name">${asteroid.name}</div>
+                <div class="asteroid-name">${asteroid.id}</div>
                 <div class="asteroid-fact">${fact}</div>
                 <div class="asteroid-stats">
                     <div class="asteroid-stat">
@@ -1290,7 +1295,7 @@
             </div>
             <div class="asteroid-actions">
                 <div class="asteroid-date">Detected on: ${asteroid.date}</div>
-                <button class="simulate-button" data-index="${index}">Simulate</button>
+                <button class="simulate-button"  data-index="${index}">Simulate</button>
             </div>
         </div>
     `;
@@ -1301,10 +1306,16 @@
                 }, 100);
 
                 // Add event listener to simulate button
-                const simulateBtn = item.querySelector('.simulate-button');
-                simulateBtn.addEventListener('click', () => {
+                simulateBtn.addEventListener('click', function () {
+                    // Object ko JSON string banakar store karo
+                    localStorage.setItem('asteroid', JSON.stringify(asteroid));
+                    console.log("this is just testing")
+                    // Agar sirf asteroid.id chahiye to:
+                    // localStorage.setItem('asteroidId', asteroid.id);
+
                     openSimulation(asteroid);
                 });
+
 
                 return item;
             }
@@ -1367,11 +1378,15 @@
             // Add event listener to simulate button
             const simulateBtn = item.querySelector('.simulate-button');
             simulateBtn.addEventListener('click', () => {
+                console.log("this is testing")
+                localStorage.setItem('asteroid', JSON.stringify(asteroid));
+
                 openSimulation(asteroid);
             });
 
             return item;
         }
+    
         function displayAsteroidsPage() {
             // Clear previous results
             asteroidsList.innerHTML = '';
@@ -1392,78 +1407,78 @@
         }
 
         function createAsteroidModel(canvasId, asteroid) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    
-    // Set canvas dimensions explicitly
-    const container = canvas.parentElement;
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    
-    canvas.width = width;
-    canvas.height = height;
-    
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        alpha: true,
-        antialias: true
-    });
-    
-    renderer.setSize(width, height);
-    renderer.setClearColor(0x000000, 0);
-    
-    // Create asteroid geometry with LARGER scaling
-    let geometry;
-    const baseSize = 1.5; // Increased base size for better visibility
-    if (asteroid.diameter && typeof asteroid.diameter === 'number') {
-        // Scale based on actual diameter but make it much larger for display
-        const scaleFactor = Math.min(asteroid.diameter * 2, 3); // Increased multiplier
-        geometry = new THREE.SphereGeometry(baseSize * scaleFactor, 16, 16);
-    } else {
-        geometry = new THREE.SphereGeometry(baseSize, 16, 16);
-    }
-    
-    // Create material with color based on hazardous status
-    const material = new THREE.MeshStandardMaterial({
-        color: asteroid.hazardous ? 0xff3366 : 0x66ccff,
-        roughness: 0.7,
-        metalness: 0.3
-    });
-    
-    const asteroidMesh = new THREE.Mesh(geometry, material);
-    scene.add(asteroidMesh);
-    
-    // Add lighting
-    const ambientLight = new THREE.AmbientLight(0x444444); // Brighter ambient light
-    scene.add(ambientLight);
-    
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2); // Brighter directional light
-    directionalLight.position.set(2, 2, 2);
-    scene.add(directionalLight);
-    
-    // Add a point light for better visibility
-    const pointLight = new THREE.PointLight(0xffffff, 0.8); // Brighter point light
-    pointLight.position.set(3, 3, 3);
-    scene.add(pointLight);
-    
-    // Position camera CLOSER for larger appearance
-    camera.position.z = 2; // Moved camera closer
-    
-    // Animation
-    function animate() {
-        requestAnimationFrame(animate);
-        
-        // Rotate asteroid
-        asteroidMesh.rotation.x += 0.01;
-        asteroidMesh.rotation.y += 0.01;
-        
-        renderer.render(scene, camera);
-    }
-    
-    animate();
-}
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+
+            // Set canvas dimensions explicitly
+            const container = canvas.parentElement;
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                alpha: true,
+                antialias: true
+            });
+
+            renderer.setSize(width, height);
+            renderer.setClearColor(0x000000, 0);
+
+            // Create asteroid geometry with LARGER scaling
+            let geometry;
+            const baseSize = 1.5; // Increased base size for better visibility
+            if (asteroid.diameter && typeof asteroid.diameter === 'number') {
+                // Scale based on actual diameter but make it much larger for display
+                const scaleFactor = Math.min(asteroid.diameter * 2, 3); // Increased multiplier
+                geometry = new THREE.SphereGeometry(baseSize * scaleFactor, 16, 16);
+            } else {
+                geometry = new THREE.SphereGeometry(baseSize, 16, 16);
+            }
+
+            // Create material with color based on hazardous status
+            const material = new THREE.MeshStandardMaterial({
+                color: asteroid.hazardous ? 0xff3366 : 0x66ccff,
+                roughness: 0.7,
+                metalness: 0.3
+            });
+
+            const asteroidMesh = new THREE.Mesh(geometry, material);
+            scene.add(asteroidMesh);
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0x444444); // Brighter ambient light
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2); // Brighter directional light
+            directionalLight.position.set(2, 2, 2);
+            scene.add(directionalLight);
+
+            // Add a point light for better visibility
+            const pointLight = new THREE.PointLight(0xffffff, 0.8); // Brighter point light
+            pointLight.position.set(3, 3, 3);
+            scene.add(pointLight);
+
+            // Position camera CLOSER for larger appearance
+            camera.position.z = 2; // Moved camera closer
+
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Rotate asteroid
+                asteroidMesh.rotation.x += 0.01;
+                asteroidMesh.rotation.y += 0.01;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+        }
 
         function generateAsteroidFact(asteroid) {
             const facts = [];
