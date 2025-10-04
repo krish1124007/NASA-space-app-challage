@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Explorer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        a{
+            text-decoration: none;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #spaceCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            -webkit-background-clip: text; 
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            color: #9c4aff;
+            text-shadow: 0 0 10px #9c4aff;
+            margin-bottom: 30px;
+        }
+
+        
+        .buttons-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .game-button {
+            /* background: rgba(15, 15, 40, 0.85); */
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(201, 231, 224, 0.4);
+            transition: all 0.4s ease;
+           
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-button:hover {
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 0 30px #00f7ff, 0 0 60px #9c4aff;
+        }
+
+        .game-button h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #00f7ff;
+            text-shadow: 0 0 10px #00f7ff, 0 0 20px #9c4aff;
+            letter-spacing: 2px;
+        }
+
+        .game-button p {
+            font-size: 1.2rem;
+            color: #b8b8ff;
+            margin-bottom: 10px;
+        }
+
+        .game-button .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .game-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .game-button:hover::before {
+            left: 100%;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        .floating-text {
+            position: absolute;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #9c4aff;
+            text-shadow: 0 0 5px #9c4aff;
+            opacity: 0.7;
+            animation: floatText 20s infinite linear;
+        }
+
+        @keyframes floatText {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .buttons-container {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 3rem;
+                letter-spacing: 5px;
+            }
+
+            .game-button {
+                padding: 30px 15px;
+            }
+
+            .game-button h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="spaceCanvas"></canvas>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Space Explorer</h1>
+            <div class="subtitle">Navigate the Cosmos</div>
+        </header>
+
+        <div class="buttons-container">
+            <a href="./bydate/selectdate.html">
+            <div class="game-button" id="btn-asteroids">
+                <span class="icon">🪐</span>
+                <h2>Asteroid Tracker</h2>
+                <p>View asteroids by date</p>
+                <p>Real-time tracking data</p>
+            </div>
+            </a>
+            <div class="game-button" id="btn-research">
+                <span class="icon">🔬</span>
+                <h2>Research Mode</h2>
+                <p>Conduct space research</p>
+                <p>Advanced analysis tools</p>
+            </div>
+            <div class="game-button" id="btn-articles">
+                <span class="icon">📚</span>
+                <h2>Space Articles</h2>
+                <p>Read space discoveries</p>
+                <p>Latest research papers</p>
+            </div>
+            <div class="game-button" id="btn-object">
+                <span class="icon">🌌</span>
+                <h2>Object Explorer</h2>
+                <p>Examine celestial objects</p>
+                <p>3D visualization tools</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Three.js 3D Asteroids
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('spaceCanvas'),
+            alpha: true
+        });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+        
+        // Create asteroid field
+        const asteroids = [];
+        const asteroidCount = 50;
+        
+        // Asteroid geometry and material
+        const asteroidGeometry = new THREE.SphereGeometry(1, 8, 8);
+        const asteroidMaterial = new THREE.MeshStandardMaterial({
+            color: 0x888888,
+            roughness: 0.8,
+            metalness: 0.2
+        });
+        
+        // Create asteroids
+        for (let i = 0; i < asteroidCount; i++) {
+            const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
+            
+            // Random position
+            asteroid.position.x = Math.random() * 100 - 50;
+            asteroid.position.y = Math.random() * 100 - 50;
+            asteroid.position.z = Math.random() * 100 - 50;
+            
+            // Random scale
+            const scale = Math.random() * 2 + 0.5;
+            asteroid.scale.set(scale, scale, scale);
+            
+            // Random rotation
+            asteroid.rotation.x = Math.random() * Math.PI;
+            asteroid.rotation.y = Math.random() * Math.PI;
+            
+            scene.add(asteroid);
+            asteroids.push({
+                mesh: asteroid,
+                speed: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                },
+                rotation: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02
+                }
+            });
+        }
+        
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0x333333);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+        
+        // Camera position
+        camera.position.z = 30;
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Move and rotate asteroids
+            asteroids.forEach(asteroid => {
+                asteroid.mesh.position.x += asteroid.speed.x;
+                asteroid.mesh.position.y += asteroid.speed.y;
+                asteroid.mesh.position.z += asteroid.speed.z;
+                
+                // Wrap around if out of bounds
+                if (asteroid.mesh.position.x > 50) asteroid.mesh.position.x = -50;
+                if (asteroid.mesh.position.x < -50) asteroid.mesh.position.x = 50;
+                if (asteroid.mesh.position.y > 50) asteroid.mesh.position.y = -50;
+                if (asteroid.mesh.position.y < -50) asteroid.mesh.position.y = 50;
+                if (asteroid.mesh.position.z > 50) asteroid.mesh.position.z = -50;
+                if (asteroid.mesh.position.z < -50) asteroid.mesh.position.z = 50;
+                
+                // Rotate
+                asteroid.mesh.rotation.x += asteroid.rotation.x;
+                asteroid.mesh.rotation.y += asteroid.rotation.y;
+            });
+            
+            // Slowly rotate camera for dynamic effect
+            camera.position.x = Math.sin(Date.now() * 0.0001) * 30;
+            camera.position.z = Math.cos(Date.now() * 0.0001) * 30;
+            camera.lookAt(0, 0, 0);
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // Create twinkling stars background
+        const starsContainer = document.getElementById('stars');
+        const starCount = 200;
+        
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            // Random position
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            
+            // Random size
+            const size = Math.random() * 3 + 1;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            
+            // Random animation delay
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            
+            starsContainer.appendChild(star);
+        }
+        
+        // Create floating text elements
+        // const spaceTerms = ['NEBULA', 'GALAXY', 'QUASAR', 'PULSAR', 'COMET', 'ORBIT', 'COSMOS', 'VOID'];
+        // for (let i = 0; i < 15; i++) {
+        //     const text = document.createElement('div');
+        //     text.classList.add('floating-text');
+        //     text.textContent = spaceTerms[Math.floor(Math.random() * spaceTerms.length)];
+            
+        //     // Random position and animation
+        //     text.style.left = `${Math.random() * 100}%`;
+        //     text.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        //     text.style.animationDelay = `${Math.random() * 5}s`;
+            
+        //     document.body.appendChild(text);
+        // }
+        
+        // Button interaction
+        const buttons = document.querySelectorAll('.game-button');
+        
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const buttonId = button.id;
+                
+                // Visual feedback
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    button.style.transform = 'translateY(-10px)';
+                }, 150);
+                
+                // In a real application, you would load content here
+                console.log(`Button clicked: ${buttonId}`);
+            });
+        });
+    </script>
+</body>
+</html>

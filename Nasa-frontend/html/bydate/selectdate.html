@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Explorer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #spaceCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: white;
+            -webkit-background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            color: #9c4aff;
+            text-shadow: 0 0 10px #9c4aff;
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            box-shadow: 0 0 20px rgba(231, 240, 238, 0.4);
+            margin-bottom: 40px;
+        }
+
+        .search-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: #00f7ff;
+            text-shadow: 0 0 10px #00f7ff, 0 0 20px #9c4aff;
+            letter-spacing: 2px;
+        }
+
+        .date-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .date-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .date-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #9c4aff;
+            text-shadow: 0 0 5px #9c4aff;
+        }
+
+        .date-input {
+            background: rgba(10, 10, 30, 0.8);
+            border: 2px solid #00f7ff;
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            font-size: 1.1rem;
+            width: 200px;
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #ff007f;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.7);
+        }
+
+        .search-button {
+            background: linear-gradient(90deg, #00f7ff, #9c4aff);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 40px;
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.7);
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .search-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 0 30px rgba(156, 74, 255, 0.9);
+        }
+
+        .search-button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .results-container {
+            width: 100%;
+            max-width: 1200px;
+            display: none;
+            margin-top: 30px;
+        }
+
+        .results-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00f7ff;
+            text-shadow: 0 0 10px #00f7ff;
+        }
+
+        .filters-container {
+            background: rgba(15, 15, 40, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+            border: 2px solid #00f7ff;
+        }
+
+        .filters-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #00f7ff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .filter-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #9c4aff;
+        }
+
+        .filter-select,
+        .filter-input {
+            background: rgba(10, 10, 30, 0.8);
+            border: 2px solid #00f7ff;
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: white;
+            font-size: 1rem;
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+        }
+
+        .filter-select:focus,
+        .filter-input:focus {
+            outline: none;
+            border-color: #ff007f;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.7);
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .filter-button {
+            background: rgba(15, 15, 40, 0.85);
+            border: 2px solid #00f7ff;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: #00f7ff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-button:hover {
+            background: rgba(0, 247, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.7);
+        }
+
+        .asteroids-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .asteroid-item {
+            display: flex;
+            background: rgba(15, 15, 40, 0.85);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+            border: 2px solid transparent;
+            background-image: linear-gradient(#0a0a2a, #0f0035),
+                linear-gradient(90deg, #00f7ff, #9c4aff, #ff007f);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .asteroid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(156, 74, 255, 0.6);
+        }
+
+        .asteroid-model-container {
+            flex: 0 0 300px;
+            height: 300px;
+            position: relative;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .asteroid-model {
+            width: 100%;
+            height: 100%;
+        }
+
+        .asteroid-details {
+            flex: 1;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .asteroid-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #00f7ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px #00f7ff;
+        }
+
+        .asteroid-fact {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #e0e0ff;
+        }
+
+        .asteroid-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .asteroid-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            color: #9c4aff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .hazardous {
+            color: #ff007f;
+            font-weight: bold;
+            text-shadow: 0 0 5px #ff007f;
+        }
+
+        .safe {
+            color: #00f7ff;
+            font-weight: bold;
+        }
+
+        .asteroid-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .asteroid-date {
+            color: #9c4aff;
+            font-size: 0.9rem;
+        }
+
+        .simulate-button {
+            background: linear-gradient(90deg, #ff007f, #9c4aff);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .simulate-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.8);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .pagination-button {
+            background: rgba(15, 15, 40, 0.85);
+            border: 2px solid #00f7ff;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: #00f7ff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-button:hover:not(:disabled) {
+            background: rgba(0, 247, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.7);
+        }
+
+        .pagination-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            font-family: 'Orbitron', sans-serif;
+            color: #9c4aff;
+            font-size: 1.1rem;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(15, 15, 40, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+            border: 2px solid #00f7ff;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: #9c4aff;
+            text-shadow: 0 0 10px #9c4aff;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: #00f7ff;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .floating-text {
+            position: absolute;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: #9c4aff;
+            text-shadow: 0 0 5px #9c4aff;
+            opacity: 0.7;
+            animation: floatText 20s infinite linear;
+        }
+
+        @keyframes floatText {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-bar-container {
+            width: 80%;
+            max-width: 600px;
+            height: 30px;
+            background: rgba(20, 20, 50, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+            border: 2px solid #00f7ff;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f7ff, #9c4aff, #ff007f);
+            border-radius: 15px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .loading-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #00f7ff;
+            text-shadow: 0 0 10px #00f7ff;
+            margin-bottom: 10px;
+        }
+
+        .loading-percentage {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #9c4aff;
+            text-shadow: 0 0 10px #9c4aff;
+        }
+
+        .error-message {
+            background: rgba(255, 0, 127, 0.2);
+            border: 2px solid #ff007f;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'Orbitron', sans-serif;
+            color: #ff007f;
+            text-shadow: 0 0 5px #ff007f;
+            display: none;
+        }
+
+        .cors-fix-notice {
+            background: rgba(156, 74, 255, 0.2);
+            border: 2px solid #9c4aff;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'Rajdhani', sans-serif;
+            color: #9c4aff;
+        }
+
+        /* Simulation Modal */
+        .simulation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .simulation-content {
+            background: rgba(15, 15, 40, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 0 30px rgba(0, 247, 255, 0.5);
+            border: 2px solid #00f7ff;
+            position: relative;
+        }
+
+        .simulation-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #00f7ff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .simulation-canvas-container {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .simulation-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .simulation-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .simulation-stat {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(156, 74, 255, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .simulation-label {
+            color: #9c4aff;
+            font-weight: 600;
+        }
+
+        .simulation-value {
+            color: #fff;
+        }
+
+        .simulation-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .simulation-button {
+            background: rgba(15, 15, 40, 0.85);
+            border: 2px solid #00f7ff;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: #00f7ff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .simulation-button:hover {
+            background: rgba(0, 247, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.7);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ff007f;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+                letter-spacing: 5px;
+            }
+
+            .date-inputs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .date-group {
+                align-items: center;
+            }
+
+            .search-container {
+                padding: 30px 20px;
+            }
+
+            .asteroid-item {
+                flex-direction: column;
+            }
+
+            .asteroid-model-container {
+                flex: 0 0 250px;
+                height: 250px;
+            }
+
+            .asteroid-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-options {
+                grid-template-columns: 1fr;
+            }
+
+            .simulation-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="spaceCanvas"></canvas>
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <header>
+            <h1>Space Explorer</h1>
+            <div class="subtitle">Navigate the Cosmos</div>
+        </header>
+
+        <div class="cors-fix-notice" id="cors-notice">
+            <strong>CORS Notice:</strong> Make sure your Flask server has CORS enabled. Run:
+            <code>pip install flask-cors</code> and add <code>CORS(app)</code> to your Flask app.
+        </div>
+
+        <div class="search-container">
+            <h2 class="search-title">Asteroid Search</h2>
+            <div class="date-inputs">
+                <div class="date-group">
+                    <label class="date-label" for="start-date">Start Date</label>
+                    <input type="date" id="start-date" class="date-input">
+                </div>
+                <div class="date-group">
+                    <label class="date-label" for="end-date">End Date</label>
+                    <input type="date" id="end-date" class="date-input">
+                </div>
+            </div>
+            <button class="search-button" id="search-btn">Search Asteroids</button>
+        </div>
+
+        <div class="error-message" id="error-message"></div>
+
+        <div class="results-container" id="results-container">
+            <h2 class="results-title">Asteroid Detection Results</h2>
+
+            <div class="stats-container" id="stats-container">
+                <!-- Stats will be populated by JavaScript -->
+            </div>
+
+            <div class="filters-container" id="filters-container">
+                <h3 class="filters-title">Filter Asteroids</h3>
+                <div class="filter-options">
+                    <div class="filter-group">
+                        <label class="filter-label" for="hazard-filter">Hazard Status</label>
+                        <select class="filter-select" id="hazard-filter">
+                            <option value="all">All Asteroids</option>
+                            <option value="hazardous">Potentially Hazardous</option>
+                            <option value="safe">Safe Asteroids</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="size-filter">Min Diameter (km)</label>
+                        <input type="number" class="filter-input" id="size-filter" min="0" step="0.1" placeholder="0">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="velocity-filter">Min Velocity (km/s)</label>
+                        <input type="number" class="filter-input" id="velocity-filter" min="0" step="1" placeholder="0">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="sort-by">Sort By</label>
+                        <select class="filter-select" id="sort-by">
+                            <option value="name">Name</option>
+                            <option value="diameter">Diameter</option>
+                            <option value="velocity">Velocity</option>
+                            <option value="distance">Miss Distance</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-button" id="apply-filters">Apply Filters</button>
+                    <button class="filter-button" id="reset-filters">Reset Filters</button>
+                </div>
+            </div>
+
+            <div class="asteroids-list" id="asteroids-list">
+                <!-- Asteroid items will be populated by JavaScript -->
+            </div>
+
+            <div class="pagination" id="pagination">
+                <!-- Pagination controls will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Animation -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-text">Scanning the Cosmos</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+        <div class="loading-percentage" id="loading-percentage">0%</div>
+    </div>
+
+    <!-- Simulation Modal -->
+    <div class="simulation-modal" id="simulation-modal">
+        <div class="simulation-content">
+            <button class="close-button" id="close-simulation">&times;</button>
+            <h3 class="simulation-title" id="simulation-title">Asteroid Simulation</h3>
+            <div class="simulation-canvas-container">
+                <canvas class="simulation-canvas" id="simulation-canvas"></canvas>
+            </div>
+            <div class="simulation-info" id="simulation-info">
+                <!-- Simulation stats will be populated by JavaScript -->
+            </div>
+            <div class="simulation-controls">
+                <button class="simulation-button" id="start-simulation">Start Simulation</button>
+                <button class="simulation-button" id="pause-simulation">Pause</button>
+                <button class="simulation-button" id="reset-simulation">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Three.js 3D Asteroids
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('spaceCanvas'),
+            alpha: true
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+
+        // Create asteroid field
+        const asteroids = [];
+        const asteroidCount = 50;
+
+        // Asteroid geometry and material
+        const asteroidGeometry = new THREE.SphereGeometry(1, 8, 8);
+        const asteroidMaterial = new THREE.MeshStandardMaterial({
+            color: 0x888888,
+            roughness: 0.8,
+            metalness: 0.2
+        });
+
+        // Create asteroids
+        for (let i = 0; i < asteroidCount; i++) {
+            const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
+
+            // Random position
+            asteroid.position.x = Math.random() * 100 - 50;
+            asteroid.position.y = Math.random() * 100 - 50;
+            asteroid.position.z = Math.random() * 100 - 50;
+
+            // Random scale
+            const scale = Math.random() * 2 + 0.5;
+            asteroid.scale.set(scale, scale, scale);
+
+            // Random rotation
+            asteroid.rotation.x = Math.random() * Math.PI;
+            asteroid.rotation.y = Math.random() * Math.PI;
+
+            scene.add(asteroid);
+            asteroids.push({
+                mesh: asteroid,
+                speed: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                },
+                rotation: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02
+                }
+            });
+        }
+
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0x333333);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        // Camera position
+        camera.position.z = 30;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Move and rotate asteroids
+            asteroids.forEach(asteroid => {
+                asteroid.mesh.position.x += asteroid.speed.x;
+                asteroid.mesh.position.y += asteroid.speed.y;
+                asteroid.mesh.position.z += asteroid.speed.z;
+
+                // Wrap around if out of bounds
+                if (asteroid.mesh.position.x > 50) asteroid.mesh.position.x = -50;
+                if (asteroid.mesh.position.x < -50) asteroid.mesh.position.x = 50;
+                if (asteroid.mesh.position.y > 50) asteroid.mesh.position.y = -50;
+                if (asteroid.mesh.position.y < -50) asteroid.mesh.position.y = 50;
+                if (asteroid.mesh.position.z > 50) asteroid.mesh.position.z = -50;
+                if (asteroid.mesh.position.z < -50) asteroid.mesh.position.z = 50;
+
+                // Rotate
+                asteroid.mesh.rotation.x += asteroid.rotation.x;
+                asteroid.mesh.rotation.y += asteroid.rotation.y;
+            });
+
+            // Slowly rotate camera for dynamic effect
+            camera.position.x = Math.sin(Date.now() * 0.0001) * 30;
+            camera.position.z = Math.cos(Date.now() * 0.0001) * 30;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Create twinkling stars background
+        const starsContainer = document.getElementById('stars');
+        const starCount = 200;
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+
+            // Random position
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+
+            // Random size
+            const size = Math.random() * 3 + 1;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+
+            // Random animation delay
+            star.style.animationDelay = `${Math.random() * 5}s`;
+
+            starsContainer.appendChild(star);
+        }
+
+        // Search functionality
+        const searchBtn = document.getElementById('search-btn');
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingBar = document.getElementById('loading-bar');
+        const loadingPercentage = document.getElementById('loading-percentage');
+        const resultsContainer = document.getElementById('results-container');
+        const asteroidsList = document.getElementById('asteroids-list');
+        const statsContainer = document.getElementById('stats-container');
+        const paginationContainer = document.getElementById('pagination');
+        const errorMessage = document.getElementById('error-message');
+        const corsNotice = document.getElementById('cors-notice');
+        const filtersContainer = document.getElementById('filters-container');
+
+        // Filter elements
+        const hazardFilter = document.getElementById('hazard-filter');
+        const sizeFilter = document.getElementById('size-filter');
+        const velocityFilter = document.getElementById('velocity-filter');
+        const sortByFilter = document.getElementById('sort-by');
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        const resetFiltersBtn = document.getElementById('reset-filters');
+
+        // Simulation elements
+        const simulationModal = document.getElementById('simulation-modal');
+        const simulationCanvas = document.getElementById('simulation-canvas');
+        const simulationTitle = document.getElementById('simulation-title');
+        const simulationInfo = document.getElementById('simulation-info');
+        const startSimulationBtn = document.getElementById('start-simulation');
+        const pauseSimulationBtn = document.getElementById('pause-simulation');
+        const resetSimulationBtn = document.getElementById('reset-simulation');
+        const closeSimulationBtn = document.getElementById('close-simulation');
+
+        // Pagination variables
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        let allAsteroids = [];
+        let filteredAsteroids = [];
+
+        // Set default dates (today and 7 days from now)
+        const today = new Date();
+        const nextWeek = new Date();
+        nextWeek.setDate(today.getDate() + 7);
+
+        startDateInput.valueAsDate = today;
+        endDateInput.valueAsDate = nextWeek;
+
+        // Test CORS connection on page load
+        window.addEventListener('load', () => {
+            testCorsConnection();
+        });
+
+        async function testCorsConnection() {
+            try {
+                const testResponse = await fetch('http://127.0.0.1:5000/', {
+                    method: 'HEAD',
+                    mode: 'cors'
+                });
+
+                if (testResponse.ok) {
+                    corsNotice.style.display = 'none';
+                }
+            } catch (error) {
+                console.log('CORS test failed - make sure Flask server is running with CORS enabled');
+            }
+        }
+
+        searchBtn.addEventListener('click', () => {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+
+            if (!startDate || !endDate) {
+                showError('Please select both start and end dates');
+                return;
+            }
+
+            if (new Date(startDate) > new Date(endDate)) {
+                showError('Start date cannot be after end date');
+                return;
+            }
+
+            // Show loading animation
+            loadingOverlay.style.display = 'flex';
+            errorMessage.style.display = 'none';
+
+            // Fetch asteroid data from your Flask backend
+            fetchAsteroidData(startDate, endDate);
+        });
+
+        async function fetchAsteroidData(startDate, endDate) {
+            try {
+                updateLoadingProgress(20);
+
+                // Fetch data from your Flask backend with CORS mode
+                const response = await fetch(`http://127.0.0.1:5000/?start_date=${startDate}&end_date=${endDate}`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                updateLoadingProgress(60);
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                updateLoadingProgress(90);
+
+                // Check if the response contains an error
+                if (data.error) {
+                    throw new Error(`NASA API Error: ${data.error}`);
+                }
+
+                updateLoadingProgress(100);
+
+                // Hide loading animation after a short delay
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    processAsteroidData(data);
+                }, 500);
+
+            } catch (error) {
+                console.error('Error fetching asteroid data:', error);
+                loadingOverlay.style.display = 'none';
+
+                if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
+                    showError(`CORS Error: Cannot connect to Flask server. Make sure:<br>
+                    1. Your Flask server is running on http://127.0.0.1:5000<br>
+                    2. You have installed flask-cors: <code>pip install flask-cors</code><br>
+                    3. You have added <code>CORS(app)</code> to your Flask application`);
+                } else {
+                    showError(`Error: ${error.message}`);
+                }
+            }
+        }
+
+        function processAsteroidData(data) {
+            // Check if data has the expected structure
+            if (!data.near_earth_objects) {
+                showError('Unexpected data format received from NASA API');
+                return;
+            }
+
+            // Extract asteroid data from NASA API response
+            const nearEarthObjects = data.near_earth_objects;
+            allAsteroids = [];
+            let hazardousCount = 0;
+            let totalAsteroids = 0;
+
+            // Process data for each date
+            for (const date in nearEarthObjects) {
+                const asteroidsForDate = nearEarthObjects[date];
+                totalAsteroids += asteroidsForDate.length;
+
+                asteroidsForDate.forEach(asteroid => {
+                    if (asteroid.is_potentially_hazardous_asteroid) {
+                        hazardousCount++;
+                    }
+
+                    allAsteroids.push({
+                        name: asteroid.name,
+                        id: asteroid.id,
+                        diameter: asteroid.estimated_diameter?.kilometers?.estimated_diameter_max || 0,
+                        velocity: parseFloat(asteroid.close_approach_data?.[0]?.relative_velocity?.kilometers_per_second) || 0,
+                        missDistance: parseFloat(asteroid.close_approach_data?.[0]?.miss_distance?.kilometers) || 0,
+                        hazardous: asteroid.is_potentially_hazardous_asteroid,
+                        date: date,
+                        orbitalData: asteroid.close_approach_data?.[0]?.orbiting_body || 'Unknown',
+                        magnitude: asteroid.absolute_magnitude_h || 'Unknown'
+                    });
+                });
+            }
+
+            // Reset to first page
+            currentPage = 1;
+
+            // Apply default filters
+            applyFilters();
+
+            // Display statistics
+            displayStatistics(totalAsteroids, hazardousCount, allAsteroids.length);
+
+            // Show results container
+            resultsContainer.style.display = 'block';
+
+            // Scroll to results
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function applyFilters() {
+            // Get filter values
+            const hazardValue = hazardFilter.value;
+            const minDiameter = parseFloat(sizeFilter.value) || 0;
+            const minVelocity = parseFloat(velocityFilter.value) || 0;
+            const sortBy = sortByFilter.value;
+
+            // Apply filters
+            filteredAsteroids = allAsteroids.filter(asteroid => {
+                // Hazard filter
+                if (hazardValue === 'hazardous' && !asteroid.hazardous) return false;
+                if (hazardValue === 'safe' && asteroid.hazardous) return false;
+
+                // Size filter
+                if (asteroid.diameter < minDiameter) return false;
+
+                // Velocity filter
+                if (asteroid.velocity < minVelocity) return false;
+
+                return true;
+            });
+
+            // Sort asteroids
+            filteredAsteroids.sort((a, b) => {
+                switch (sortBy) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'diameter':
+                        return b.diameter - a.diameter;
+                    case 'velocity':
+                        return b.velocity - a.velocity;
+                    case 'distance':
+                        return a.missDistance - b.missDistance;
+                    default:
+                        return 0;
+                }
+            });
+
+            // Display asteroid list with pagination
+            displayAsteroidsPage();
+        }
+
+        function displayStatistics(totalAsteroids, hazardousCount, uniqueAsteroids) {
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Asteroids</div>
+                    <div class="stat-value">${totalAsteroids}</div>
+                    <div class="stat-desc">Detected in date range</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Potentially Hazardous</div>
+                    <div class="stat-value ${hazardousCount > 0 ? 'hazardous' : 'safe'}">${hazardousCount}</div>
+                    <div class="stat-desc">Require monitoring</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Unique Objects</div>
+                    <div class="stat-value">${uniqueAsteroids}</div>
+                    <div class="stat-desc">Different asteroids</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Date Range</div>
+                    <div class="stat-value">${startDateInput.value} to ${endDateInput.value}</div>
+                    <div class="stat-desc">Observation period</div>
+                </div>
+            `;
+        }
+
+        function createAsteroidItem(asteroid, index) {
+            const item = document.createElement('div');
+            item.className = 'asteroid-item'; function createAsteroidItem(asteroid, index) {
+                const item = document.createElement('div');
+                item.className = 'asteroid-item';
+
+                const hazardousClass = asteroid.hazardous ? 'hazardous' : 'safe';
+                const hazardousText = asteroid.hazardous ? 'Yes' : 'No';
+
+                // Generate interesting fact based on asteroid properties
+                const fact = generateAsteroidFact(asteroid);
+
+                item.innerHTML = `
+        <div class="asteroid-model-container">
+            <canvas class="asteroid-model" id="asteroid-model-${index}"></canvas>
+        </div>
+        <div class="asteroid-details">
+            <div>
+                <div class="asteroid-name">${asteroid.name}</div>
+                <div class="asteroid-fact">${fact}</div>
+                <div class="asteroid-stats">
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Diameter (km)</span>
+                        <span class="stat-value">${typeof asteroid.diameter === 'number' ? asteroid.diameter.toFixed(3) : asteroid.diameter}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Velocity (km/s)</span>
+                        <span class="stat-value">${typeof asteroid.velocity === 'number' ? asteroid.velocity.toFixed(2) : asteroid.velocity}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Miss Distance (km)</span>
+                        <span class="stat-value">${typeof asteroid.missDistance === 'number' ?
+                        asteroid.missDistance.toLocaleString() :
+                        asteroid.missDistance}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Orbiting Body</span>
+                        <span class="stat-value">${asteroid.orbitalData}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Absolute Magnitude</span>
+                        <span class="stat-value">${asteroid.magnitude}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Potentially Hazardous</span>
+                        <span class="stat-value ${hazardousClass}">${hazardousText}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="asteroid-actions">
+                <div class="asteroid-date">Detected on: ${asteroid.date}</div>
+                <button class="simulate-button" data-index="${index}">Simulate</button>
+            </div>
+        </div>
+    `;
+
+                // Use setTimeout to ensure DOM is ready before creating 3D model
+                setTimeout(() => {
+                    createAsteroidModel(`asteroid-model-${index}`, asteroid);
+                }, 100);
+
+                // Add event listener to simulate button
+                const simulateBtn = item.querySelector('.simulate-button');
+                simulateBtn.addEventListener('click', () => {
+                    openSimulation(asteroid);
+                });
+
+                return item;
+            }
+
+            const hazardousClass = asteroid.hazardous ? 'hazardous' : 'safe';
+            const hazardousText = asteroid.hazardous ? 'Yes' : 'No';
+
+            // Generate interesting fact based on asteroid properties
+            const fact = generateAsteroidFact(asteroid);
+
+            item.innerHTML = `
+        <div class="asteroid-model-container">
+            <canvas class="asteroid-model" id="asteroid-model-${index}"></canvas>
+        </div>
+        <div class="asteroid-details">
+            <div>
+                <div class="asteroid-name">${asteroid.name}</div>
+                <div class="asteroid-fact">${fact}</div>
+                <div class="asteroid-stats">
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Diameter (km)</span>
+                        <span class="stat-value">${typeof asteroid.diameter === 'number' ? asteroid.diameter.toFixed(3) : asteroid.diameter}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Velocity (km/s)</span>
+                        <span class="stat-value">${typeof asteroid.velocity === 'number' ? asteroid.velocity.toFixed(2) : asteroid.velocity}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Miss Distance (km)</span>
+                        <span class="stat-value">${typeof asteroid.missDistance === 'number' ?
+                    asteroid.missDistance.toLocaleString() :
+                    asteroid.missDistance}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Orbiting Body</span>
+                        <span class="stat-value">${asteroid.orbitalData}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Absolute Magnitude</span>
+                        <span class="stat-value">${asteroid.magnitude}</span>
+                    </div>
+                    <div class="asteroid-stat">
+                        <span class="stat-label">Potentially Hazardous</span>
+                        <span class="stat-value ${hazardousClass}">${hazardousText}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="asteroid-actions">
+                <div class="asteroid-date">Detected on: ${asteroid.date}</div>
+                <button class="simulate-button" data-index="${index}">Simulate</button>
+            </div>
+        </div>
+    `;
+
+            // Use setTimeout to ensure DOM is ready before creating 3D model
+            setTimeout(() => {
+                createAsteroidModel(`asteroid-model-${index}`, asteroid);
+            }, 100);
+
+            // Add event listener to simulate button
+            const simulateBtn = item.querySelector('.simulate-button');
+            simulateBtn.addEventListener('click', () => {
+                openSimulation(asteroid);
+            });
+
+            return item;
+        }
+        function displayAsteroidsPage() {
+            // Clear previous results
+            asteroidsList.innerHTML = '';
+
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, filteredAsteroids.length);
+            const currentAsteroids = filteredAsteroids.slice(startIndex, endIndex);
+
+            // Display asteroid items
+            currentAsteroids.forEach((asteroid, index) => {
+                const asteroidItem = createAsteroidItem(asteroid, startIndex + index + 1);
+                asteroidsList.appendChild(asteroidItem);
+            });
+
+            // Display pagination controls
+            displayPaginationControls();
+        }
+
+        function createAsteroidModel(canvasId, asteroid) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    
+    // Set canvas dimensions explicitly
+    const container = canvas.parentElement;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    canvas.width = width;
+    canvas.height = height;
+    
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        alpha: true,
+        antialias: true
+    });
+    
+    renderer.setSize(width, height);
+    renderer.setClearColor(0x000000, 0);
+    
+    // Create asteroid geometry with LARGER scaling
+    let geometry;
+    const baseSize = 1.5; // Increased base size for better visibility
+    if (asteroid.diameter && typeof asteroid.diameter === 'number') {
+        // Scale based on actual diameter but make it much larger for display
+        const scaleFactor = Math.min(asteroid.diameter * 2, 3); // Increased multiplier
+        geometry = new THREE.SphereGeometry(baseSize * scaleFactor, 16, 16);
+    } else {
+        geometry = new THREE.SphereGeometry(baseSize, 16, 16);
+    }
+    
+    // Create material with color based on hazardous status
+    const material = new THREE.MeshStandardMaterial({
+        color: asteroid.hazardous ? 0xff3366 : 0x66ccff,
+        roughness: 0.7,
+        metalness: 0.3
+    });
+    
+    const asteroidMesh = new THREE.Mesh(geometry, material);
+    scene.add(asteroidMesh);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0x444444); // Brighter ambient light
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2); // Brighter directional light
+    directionalLight.position.set(2, 2, 2);
+    scene.add(directionalLight);
+    
+    // Add a point light for better visibility
+    const pointLight = new THREE.PointLight(0xffffff, 0.8); // Brighter point light
+    pointLight.position.set(3, 3, 3);
+    scene.add(pointLight);
+    
+    // Position camera CLOSER for larger appearance
+    camera.position.z = 2; // Moved camera closer
+    
+    // Animation
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        // Rotate asteroid
+        asteroidMesh.rotation.x += 0.01;
+        asteroidMesh.rotation.y += 0.01;
+        
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+}
+
+        function generateAsteroidFact(asteroid) {
+            const facts = [];
+
+            if (asteroid.hazardous) {
+                facts.push("This asteroid is classified as potentially hazardous due to its size and close approach distance.");
+            } else {
+                facts.push("This asteroid poses no threat to Earth based on current trajectory calculations.");
+            }
+
+            if (asteroid.diameter && typeof asteroid.diameter === 'number') {
+                if (asteroid.diameter > 1) {
+                    facts.push(`With a diameter of ${asteroid.diameter.toFixed(2)} km, this is a significant-sized asteroid.`);
+                } else {
+                    facts.push(`This relatively small asteroid has a diameter of ${(asteroid.diameter * 1000).toFixed(0)} meters.`);
+                }
+            }
+
+            if (asteroid.velocity && typeof asteroid.velocity === 'number') {
+                if (asteroid.velocity > 20) {
+                    facts.push(`Traveling at ${asteroid.velocity.toFixed(2)} km/s, this asteroid is moving faster than average.`);
+                } else {
+                    facts.push(`This asteroid is moving at a moderate speed of ${asteroid.velocity.toFixed(2)} km/s.`);
+                }
+            }
+
+            if (asteroid.missDistance && typeof asteroid.missDistance === 'number') {
+                if (asteroid.missDistance < 1000000) {
+                    facts.push(`It will pass within ${(asteroid.missDistance / 1000).toFixed(0)} thousand km of Earth - a relatively close approach.`);
+                } else {
+                    facts.push(`It will pass at a safe distance of ${(asteroid.missDistance / 1000000).toFixed(1)} million km from Earth.`);
+                }
+            }
+
+            return facts.join(' ');
+        }
+
+        function displayPaginationControls() {
+            const totalPages = Math.ceil(filteredAsteroids.length / itemsPerPage);
+
+            paginationContainer.innerHTML = `
+                <button class="pagination-button" id="prev-page" ${currentPage === 1 ? 'disabled' : ''}>
+                    Previous
+                </button>
+                <div class="pagination-info">
+                    Page ${currentPage} of ${totalPages} (${filteredAsteroids.length} asteroids)
+                </div>
+                <button class="pagination-button" id="next-page" ${currentPage === totalPages ? 'disabled' : ''}>
+                    Next
+                </button>
+            `;
+
+            // Add event listeners
+            document.getElementById('prev-page').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayAsteroidsPage();
+                    window.scrollTo({ top: resultsContainer.offsetTop, behavior: 'smooth' });
+                }
+            });
+
+            document.getElementById('next-page').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayAsteroidsPage();
+                    window.scrollTo({ top: resultsContainer.offsetTop, behavior: 'smooth' });
+                }
+            });
+        }
+
+        function openSimulation(asteroid) {
+            simulationTitle.textContent = `Simulating ${asteroid.name}`;
+
+            // Set up simulation info
+            simulationInfo.innerHTML = `
+                <div class="simulation-stat">
+                    <span class="simulation-label">Name:</span>
+                    <span class="simulation-value">${asteroid.name}</span>
+                </div>
+                <div class="simulation-stat">
+                    <span class="simulation-label">Diameter:</span>
+                    <span class="simulation-value">${asteroid.diameter.toFixed(3)} km</span>
+                </div>
+                <div class="simulation-stat">
+                    <span class="simulation-label">Velocity:</span>
+                    <span class="simulation-value">${asteroid.velocity.toFixed(2)} km/s</span>
+                </div>
+                <div class="simulation-stat">
+                    <span class="simulation-label">Miss Distance:</span>
+                    <span class="simulation-value">${asteroid.missDistance.toLocaleString()} km</span>
+                </div>
+                <div class="simulation-stat">
+                    <span class="simulation-label">Hazardous:</span>
+                    <span class="simulation-value ${asteroid.hazardous ? 'hazardous' : 'safe'}">${asteroid.hazardous ? 'Yes' : 'No'}</span>
+                </div>
+                <div class="simulation-stat">
+                    <span class="simulation-label">Close Approach:</span>
+                    <span class="simulation-value">${asteroid.date}</span>
+                </div>
+            `;
+
+            // Initialize simulation
+            initSimulation(asteroid);
+
+            // Show modal
+            simulationModal.style.display = 'flex';
+        }
+
+        function initSimulation(asteroid) {
+            // Set up Three.js simulation
+            const canvas = simulationCanvas;
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                alpha: true,
+                antialias: true
+            });
+
+            renderer.setSize(canvas.width, canvas.height);
+            renderer.setClearColor(0x000000, 0);
+
+            // Create Earth
+            const earthGeometry = new THREE.SphereGeometry(2, 32, 32);
+            const earthMaterial = new THREE.MeshStandardMaterial({
+                color: 0x2233ff,
+                roughness: 0.8,
+                metalness: 0.2
+            });
+            const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+            scene.add(earth);
+
+            // Create asteroid for simulation
+            const asteroidGeometry = new THREE.SphereGeometry(0.3, 12, 12);
+            const asteroidMaterial = new THREE.MeshStandardMaterial({
+                color: asteroid.hazardous ? 0xff3366 : 0x66ccff,
+                roughness: 0.7,
+                metalness: 0.3
+            });
+            const asteroidMesh = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
+
+            // Position asteroid based on miss distance (scaled for visualization)
+            const distanceScale = Math.min(asteroid.missDistance / 10000000, 8);
+            asteroidMesh.position.x = distanceScale;
+            asteroidMesh.position.y = 0.5;
+
+            scene.add(asteroidMesh);
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0x333333);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            // Position camera
+            camera.position.z = 10;
+
+            // Animation variables
+            let animationId = null;
+            let isAnimating = false;
+            let time = 0;
+
+            function animate() {
+                if (!isAnimating) return;
+
+                animationId = requestAnimationFrame(animate);
+
+                // Move asteroid in an elliptical path
+                time += 0.02;
+                asteroidMesh.position.x = Math.cos(time) * distanceScale;
+                asteroidMesh.position.z = Math.sin(time) * (distanceScale / 2);
+
+                // Rotate Earth
+                earth.rotation.y += 0.01;
+
+                renderer.render(scene, camera);
+            }
+
+            // Set up simulation controls
+            startSimulationBtn.onclick = () => {
+                if (!isAnimating) {
+                    isAnimating = true;
+                    animate();
+                }
+            };
+
+            pauseSimulationBtn.onclick = () => {
+                isAnimating = false;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+            };
+
+            resetSimulationBtn.onclick = () => {
+                isAnimating = false;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+                time = 0;
+                asteroidMesh.position.x = distanceScale;
+                asteroidMesh.position.y = 0.5;
+                asteroidMesh.position.z = 0;
+                renderer.render(scene, camera);
+            };
+
+            // Initial render
+            renderer.render(scene, camera);
+        }
+
+        function updateLoadingProgress(progress) {
+            loadingBar.style.width = `${progress}%`;
+            loadingPercentage.textContent = `${Math.round(progress)}%`;
+        }
+
+        function showError(message) {
+            errorMessage.innerHTML = message;
+            errorMessage.style.display = 'block';
+            resultsContainer.style.display = 'none';
+        }
+
+        // Event listeners for filters
+        applyFiltersBtn.addEventListener('click', () => {
+            currentPage = 1;
+            applyFilters();
+        });
+
+        resetFiltersBtn.addEventListener('click', () => {
+            hazardFilter.value = 'all';
+            sizeFilter.value = '';
+            velocityFilter.value = '';
+            sortByFilter.value = 'name';
+            currentPage = 1;
+            applyFilters();
+        });
+
+        // Event listener for closing simulation
+        closeSimulationBtn.addEventListener('click', () => {
+            simulationModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        simulationModal.addEventListener('click', (e) => {
+            if (e.target === simulationModal) {
+                simulationModal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

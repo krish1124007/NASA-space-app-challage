@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AstroImpact Simulator — Advanced NEO Impact Analysis</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0a0e14;
+      --bg-secondary: #0f161c;
+      --bg-tertiary: #141e26;
+      --accent-primary: #00d4ff;
+      --accent-secondary: #00b8cc;
+      --accent-tertiary: #0095b3;
+      --text-primary: #e6f1ff;
+      --text-secondary: #a8c7fa;
+      --text-muted: #7a8ca5;
+      --success: #00e676;
+      --warning: #ffab00;
+      --danger: #ff5252;
+      --card-radius: 12px;
+      --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s ease;
+      --glass: rgba(255, 255, 255, 0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    #app {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      grid-template-rows: 1fr auto;
+      gap: 16px;
+      padding: 16px;
+      min-height: 100vh;
+      grid-template-areas:
+        "sidebar main right"
+        "footer footer footer";
+    }
+
+    /* Sidebar */
+    .sidebar {
+      grid-area: sidebar;
+      background: var(--bg-secondary);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      transition: var(--transition);
+    }
+
+    .sidebar.collapsed {
+      width: 60px;
+      padding: 20px 10px;
+    }
+
+    .sidebar.collapsed .card-title span,
+    .sidebar.collapsed .form-label,
+    .sidebar.collapsed .form-input,
+    .sidebar.collapsed .btn-text,
+    .sidebar.collapsed .status-indicator span {
+      display: none;
+    }
+
+    .sidebar.collapsed .card-title {
+      justify-content: center;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .toggle-sidebar {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      transition: var(--transition);
+    }
+
+    .toggle-sidebar:hover {
+      color: var(--accent-primary);
+    }
+
+    .card {
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--accent-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title i {
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+    }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: #001e2b;
+    }
+
+    .btn-secondary {
+      background: var(--glass);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .status-dot.warning {
+      background: var(--warning);
+    }
+
+    .status-dot.error {
+      background: var(--danger);
+    }
+
+    /* Main Content */
+    .main {
+      grid-area: main;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .simulation-container {
+      background: var(--bg-secondary);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .simulation-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .simulation-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .simulation-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .simulation-body {
+      flex: 1;
+      position: relative;
+      background: #000;
+    }
+
+    #three-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    .visualization-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .visualization-panel {
+      background: var(--bg-secondary);
+      border-radius: var(--card-radius);
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .chart-container {
+      flex: 1;
+      position: relative;
+    }
+
+    .console {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 8px;
+      padding: 12px;
+      flex: 1;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .console-line {
+      margin-bottom: 4px;
+    }
+
+    .console-time {
+      color: var(--text-muted);
+    }
+
+    .console-info {
+      color: var(--accent-primary);
+    }
+
+    .console-warning {
+      color: var(--warning);
+    }
+
+    .console-error {
+      color: var(--danger);
+    }
+
+    /* Right Panel */
+    .right-panel {
+      grid-area: right;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .right-panel.collapsed {
+      width: 60px;
+    }
+
+    .right-panel.collapsed .card-title span,
+    .right-panel.collapsed .form-label,
+    .right-panel.collapsed .form-input,
+    .right-panel.collapsed .btn-text,
+    .right-panel.collapsed .stat-card,
+    .right-panel.collapsed .ai-header span,
+    .right-panel.collapsed .ai-body,
+    .right-panel.collapsed .ai-input-group {
+      display: none;
+    }
+
+    .right-panel.collapsed .card-title {
+      justify-content: center;
+    }
+
+    .impact-controls {
+      background: var(--bg-secondary);
+      border-radius: var(--card-radius);
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .ai-agent {
+      background: var(--bg-secondary);
+      border-radius: var(--card-radius);
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .ai-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ai-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .ai-body {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 12px;
+    }
+
+    .ai-message {
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      max-width: 85%;
+      font-size: 13px;
+    }
+
+    .ai-user {
+      background: rgba(0, 212, 255, 0.1);
+      margin-left: auto;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+    }
+
+    .ai-bot {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .ai-input-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .voice-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .voice-btn:hover {
+      background: rgba(0, 212, 255, 0.1);
+      border-color: var(--accent-primary);
+    }
+
+    .voice-btn.recording {
+      background: rgba(255, 82, 82, 0.2);
+      border-color: var(--danger);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(255, 82, 82, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); }
+    }
+
+    /* Footer */
+    .footer {
+      grid-area: footer;
+      background: var(--bg-secondary);
+      border-radius: var(--card-radius);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .footer-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Loading Spinner */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent-primary);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Protect Earth Section */
+    .protect-earth {
+      background: var(--bg-secondary);
+      border-radius: var(--card-radius);
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      margin-top: 16px;
+    }
+
+    .protection-methods {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .method-card {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .method-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      border-color: var(--accent-primary);
+    }
+
+    .method-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: var(--accent-primary);
+    }
+
+    .method-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .method-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      #app {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "main"
+          "sidebar"
+          "right"
+          "footer";
+      }
+      
+      .visualization-panels {
+        grid-template-columns: 1fr;
+      }
+      
+      .protection-methods {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .protection-methods {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Controls</div>
+        <button class="toggle-sidebar" id="toggle-sidebar">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-asteroid"></i> <span>Asteroid Data</span></div>
+        <div class="form-group">
+          <div class="status-indicator">
+            <div class="status-dot" id="data-status"></div>
+            <span>Data Status: <span id="data-status-text">Loading...</span></span>
+          </div>
+        </div>
+        <div class="input-group">
+          <button class="btn btn-primary btn-full" id="load-data">
+            <i class="fas fa-sync-alt"></i> <span class="btn-text">Load Asteroid Data</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-sliders-h"></i> <span>Simulation Parameters</span></div>
+        <div class="form-group">
+          <label class="form-label">Size (meters)</label>
+          <input type="number" class="form-input" id="size-m" placeholder="Loading...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Velocity (km/s)</label>
+          <input type="number" class="form-input" id="vel-kms" placeholder="Loading...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Density (kg/m³)</label>
+          <input type="number" class="form-input" id="density" placeholder="Loading...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Impact Angle (degrees)</label>
+          <input type="number" class="form-input" id="impact-angle" value="45" min="0" max="90">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-satellite-dish"></i> <span>System Status</span></div>
+        <div class="form-group">
+          <div class="status-indicator">
+            <div class="status-dot" id="backend-status"></div>
+            <span>Backend: <span id="backend-status-text">Checking...</span></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="status-indicator">
+            <div class="status-dot" id="data-stream-status"></div>
+            <span>Data Stream: <span id="data-stream-status-text">Checking...</span></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="status-indicator">
+            <div class="status-dot" id="simulation-status"></div>
+            <span>Simulation: <span id="simulation-status-text">Ready</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="fas fa-cogs"></i> <span>Visualization</span></div>
+        <div class="form-group">
+          <label class="form-label">Trajectory Detail</label>
+          <input type="range" class="form-input" id="trajectory-detail" min="10" max="1000" value="400">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time Scale</label>
+          <input type="range" class="form-input" id="time-scale" min="1" max="10" value="1">
+        </div>
+        <div class="input-group">
+          <button class="btn btn-secondary btn-full" id="fullscreen-btn">
+            <i class="fas fa-expand"></i> <span class="btn-text">Full Screen</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="simulation-container">
+        <div class="simulation-header">
+          <div class="simulation-title">3D Impact Simulation</div>
+          <div class="simulation-controls">
+            <button class="btn btn-secondary" id="play-pause">
+              <i class="fas fa-pause"></i> Pause
+            </button>
+            <button class="btn btn-secondary" id="reset-view">
+              <i class="fas fa-sync-alt"></i> Reset
+            </button>
+            <button class="btn btn-primary" id="capture-view">
+              <i class="fas fa-camera"></i> Capture
+            </button>
+          </div>
+        </div>
+        <div class="simulation-body">
+          <div id="three-container"></div>
+        </div>
+      </div>
+
+      <div class="visualization-panels">
+        <div class="visualization-panel">
+          <div class="panel-header">
+            <div class="panel-title">Impact Energy & Effects</div>
+            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px;">
+              <i class="fas fa-expand"></i>
+            </button>
+          </div>
+          <div class="chart-container">
+            <canvas id="energyChart"></canvas>
+          </div>
+        </div>
+
+        <div class="visualization-panel">
+          <div class="panel-header">
+            <div class="panel-title">System Console</div>
+            <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px;" id="clear-console">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+          <div class="console" id="console">
+            <div class="console-line">
+              <span class="console-time">[14:22:35]</span>
+              <span class="console-info">System initialized successfully</span>
+            </div>
+            <div class="console-line">
+              <span class="console-time">[14:22:40]</span>
+              <span class="console-info">Loading asteroid data from localStorage...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="protect-earth">
+        <div class="card-title"><i class="fas fa-shield-alt"></i> Protect Earth - Deflection Methods</div>
+        <div class="protection-methods">
+          <div class="method-card" id="kinetic-impactor">
+            <div class="method-icon"><i class="fas fa-meteor"></i></div>
+            <div class="method-name">Kinetic Impactor</div>
+            <div class="method-desc">Strike asteroid with projectile to alter trajectory</div>
+          </div>
+          <div class="method-card" id="gravity-tractor">
+            <div class="method-icon"><i class="fas fa-tractor"></i></div>
+            <div class="method-name">Gravity Tractor</div>
+            <div class="method-desc">Use spacecraft gravity to slowly pull asteroid</div>
+          </div>
+          <div class="method-card" id="nuclear-deflection">
+            <div class="method-icon"><i class="fas fa-atom"></i></div>
+            <div class="method-name">Nuclear Deflection</div>
+            <div class="method-desc">Detonate nuclear device near asteroid surface</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Panel -->
+    <div class="right-panel" id="right-panel">
+      <div class="impact-controls">
+        <div class="card-title"><i class="fas fa-bullseye"></i> <span>Impact Control</span></div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="energy">-</div>
+            <div class="stat-label">Impact Energy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="crater">-</div>
+            <div class="stat-label">Crater Diameter</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="magnitude">-</div>
+            <div class="stat-label">Seismic Magnitude</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="tsunami">-</div>
+            <div class="stat-label">Tsunami Height</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Impact Coordinates</label>
+          <div class="input-group">
+            <input type="number" class="form-input" id="impact-lat" placeholder="Latitude" step="0.01" value="34.05">
+            <input type="number" class="form-input" id="impact-lon" placeholder="Longitude" step="0.01" value="-118.25">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <button class="btn btn-primary" id="simulate-btn" style="flex: 1;">
+            <i class="fas fa-bolt"></i> <span class="btn-text">Simulate Impact</span>
+          </button>
+          <button class="btn btn-secondary" id="deflect-btn">
+            <i class="fas fa-shield-alt"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="ai-agent">
+        <div class="ai-header">
+          <div class="ai-avatar">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="ai-title">AI Impact Analyst</div>
+        </div>
+        
+        <div class="ai-body" id="ai-chat">
+          <div class="ai-message ai-bot">
+            Hello! I'm your AI Impact Analyst. I can answer questions about asteroid impacts, simulation parameters, and potential effects. How can I assist you today?
+          </div>
+        </div>
+        
+        <div class="ai-input-group">
+          <input type="text" class="form-input" id="q-input" placeholder="Ask about the simulation...">
+          <div class="voice-btn" id="voice-btn">
+            <i class="fas fa-microphone"></i>
+          </div>
+          <button class="btn btn-primary" id="ask-btn">Ask</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="status-indicator">
+        <div class="status-dot" id="footer-status"></div>
+        <span>Simulation Status: <span id="status">Initializing...</span></span>
+      </div>
+      <div class="footer-controls">
+        <button class="btn btn-secondary" id="toggle-right-panel">
+          <i class="fas fa-chevron-right"></i> Toggle Panel
+        </button>
+        <button class="btn btn-secondary" id="export-data">
+          <i class="fas fa-download"></i> Export Data
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Fix for THREE.OrbitControls import issue
+    // We're using the correct CDN that provides OrbitControls as a global
+
+    // ---------- Three.js Scene Setup ----------
+    const container = document.getElementById('three-container');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1e7);
+    camera.position.set(0, 50, 220);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
+
+    // Fix for OrbitControls - check if it's available
+    let controls;
+    if (typeof THREE.OrbitControls !== 'undefined') {
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+    } else {
+      console.warn('OrbitControls not available. Using basic camera controls.');
+      // Implement basic controls if OrbitControls is not available
+      let isMouseDown = false;
+      let previousMousePosition = { x: 0, y: 0 };
+      
+      renderer.domElement.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+      });
+      
+      renderer.domElement.addEventListener('mouseup', () => {
+        isMouseDown = false;
+      });
+      
+      renderer.domElement.addEventListener('mousemove', (e) => {
+        if (!isMouseDown) return;
+        
+        const deltaX = e.clientX - previousMousePosition.x;
+        const deltaY = e.clientY - previousMousePosition.y;
+        
+        camera.position.x -= deltaX * 0.5;
+        camera.position.y += deltaY * 0.5;
+        
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+      });
+      
+      renderer.domElement.addEventListener('wheel', (e) => {
+        camera.position.z += e.deltaY * 0.1;
+      });
+    }
+
+    // Lighting
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+    scene.add(hemiLight);
+    
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(100, 100, 50);
+    scene.add(dirLight);
+
+    // Earth
+    const earthGeometry = new THREE.SphereGeometry(63, 48, 48);
+    const earthTexture = createEarthTexture();
+    const earthMaterial = new THREE.MeshPhongMaterial({ map: earthTexture });
+    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+    scene.add(earth);
+
+    // Atmosphere
+    const atmosphereGeometry = new THREE.SphereGeometry(64, 48, 48);
+    const atmosphereMaterial = new THREE.MeshPhongMaterial({
+      color: 0x48c9ff,
+      transparent: true,
+      opacity: 0.1
+    });
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+    scene.add(atmosphere);
+
+    // Asteroid
+    let asteroidMesh = null;
+    function createAsteroid(radius = 5) {
+      if (asteroidMesh) scene.remove(asteroidMesh);
+      
+      const geometry = new THREE.IcosahedronGeometry(radius, 1);
+      const material = new THREE.MeshPhongMaterial({
+        color: 0xb77d3a,
+        shininess: 30,
+        specular: 0x222222
+      });
+      
+      asteroidMesh = new THREE.Mesh(geometry, material);
+      scene.add(asteroidMesh);
+      
+      // Add a subtle glow effect
+      const glowGeometry = new THREE.IcosahedronGeometry(radius * 1.2, 1);
+      const glowMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffaa33,
+        transparent: true,
+        opacity: 0.2
+      });
+      const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+      asteroidMesh.add(glow);
+      
+      return asteroidMesh;
+    }
+    createAsteroid(5);
+
+    // Create a simple starfield
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsCount = 5000;
+    const positions = new Float32Array(starsCount * 3);
+    
+    for (let i = 0; i < starsCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 2000;
+    }
+    
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 1,
+      transparent: true
+    });
+    const starField = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(starField);
+
+    // Create Earth texture programmatically
+    function createEarthTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const context = canvas.getContext('2d');
+      
+      // Blue ocean base
+      context.fillStyle = '#1a3c5e';
+      context.fillRect(0, 0, 512, 512);
+      
+      // Add some land masses
+      context.fillStyle = '#2d5c3d';
+      context.beginPath();
+      context.ellipse(150, 200, 80, 60, 0, 0, Math.PI * 2);
+      context.fill();
+      
+      context.beginPath();
+      context.ellipse(350, 300, 60, 70, 0, 0, Math.PI * 2);
+      context.fill();
+      
+      context.beginPath();
+      context.ellipse(400, 150, 50, 40, 0, 0, Math.PI * 2);
+      context.fill();
+      
+      // Add cloud cover
+      context.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      context.beginPath();
+      context.ellipse(250, 100, 100, 40, 0, 0, Math.PI * 2);
+      context.fill();
+      
+      context.beginPath();
+      context.ellipse(100, 350, 70, 30, 0, 0, Math.PI * 2);
+      context.fill();
+      
+      const texture = new THREE.CanvasTexture(canvas);
+      return texture;
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+    });
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      if (controls) controls.update();
+      
+      // Rotate Earth
+      earth.rotation.y += 0.001;
+      atmosphere.rotation.y += 0.001;
+      
+      // Rotate asteroid if it exists
+      if (asteroidMesh) {
+        asteroidMesh.rotation.x += 0.01;
+        asteroidMesh.rotation.y += 0.005;
+      }
+      
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ---------- Application State & Data Management ----------
+    let asteroidData = null;
+    let isSimulationRunning = true;
+
+    // Load asteroid data from localStorage or use default
+    function loadAsteroidData() {
+      const asteroidID = localStorage.getItem("astroidID") || "3542519";
+      logToConsole(`Loading asteroid data for ID: ${asteroidID}`, 'info');
+      
+      // Show loading state
+      document.getElementById('data-status').className = 'status-dot warning';
+      document.getElementById('data-status-text').textContent = 'Loading...';
+      document.getElementById('load-data').innerHTML = '<div class="loading"></div> <span class="btn-text">Loading...</span>';
+      
+      // Simulate API call to backend
+      setTimeout(() => {
+        // Mock data - in a real app, this would come from your backend API
+        asteroidData = {
+          id: asteroidID,
+          name: `Asteroid ${asteroidID}`,
+          diameter: 320,
+          velocity: 15.2,
+          density: 2600,
+          composition: "Stony",
+          hazard: "Moderate"
+        };
+        
+        // Update UI with loaded data
+        document.getElementById('size-m').value = asteroidData.diameter;
+        document.getElementById('vel-kms').value = asteroidData.velocity;
+        document.getElementById('density').value = asteroidData.density;
+        
+        document.getElementById('data-status').className = 'status-dot';
+        document.getElementById('data-status-text').textContent = 'Loaded';
+        document.getElementById('load-data').innerHTML = '<i class="fas fa-sync-alt"></i> <span class="btn-text">Refresh Data</span>';
+        
+        logToConsole(`Asteroid data loaded: ${asteroidData.name}`, 'info');
+        addAIMessage(`I've loaded data for ${asteroidData.name}. It's a ${asteroidData.diameter}m diameter asteroid traveling at ${asteroidData.velocity} km/s. Based on its size and velocity, this is classified as a ${asteroidData.hazard.toLowerCase()} impact hazard.`);
+        
+        // Update asteroid size in visualization
+        createAsteroid(asteroidData.diameter / 60); // Scale for visualization
+      }, 2000);
+    }
+
+    // Check backend status
+    function checkBackendStatus() {
+      // Simulate checking backend connection
+      setTimeout(() => {
+        document.getElementById('backend-status').className = 'status-dot';
+        document.getElementById('backend-status-text').textContent = 'Connected';
+        
+        document.getElementById('data-stream-status').className = 'status-dot';
+        document.getElementById('data-stream-status-text').textContent = 'Active';
+        
+        document.getElementById('footer-status').className = 'status-dot';
+        document.getElementById('status').textContent = 'Ready';
+        
+        logToConsole('Backend services connected successfully', 'info');
+      }, 1500);
+    }
+
+    // ---------- UI Interactions ----------
+    document.getElementById('play-pause').addEventListener('click', function() {
+      isSimulationRunning = !isSimulationRunning;
+      const icon = this.querySelector('i');
+      if (isSimulationRunning) {
+        icon.classList.remove('fa-play');
+        icon.classList.add('fa-pause');
+        this.innerHTML = '<i class="fas fa-pause"></i> Pause';
+        logToConsole('Simulation resumed', 'info');
+      } else {
+        icon.classList.remove('fa-pause');
+        icon.classList.add('fa-play');
+        this.innerHTML = '<i class="fas fa-play"></i> Play';
+        logToConsole('Simulation paused', 'info');
+      }
+    });
+
+    document.getElementById('reset-view').addEventListener('click', function() {
+      camera.position.set(0, 50, 220);
+      if (controls) controls.reset();
+      logToConsole('Camera view reset', 'info');
+    });
+
+    document.getElementById('clear-console').addEventListener('click', function() {
+      document.getElementById('console').innerHTML = '';
+      logToConsole('Console cleared', 'info');
+    });
+
+    // Toggle sidebar collapse
+    document.getElementById('toggle-sidebar').addEventListener('click', function() {
+      const sidebar = document.getElementById('sidebar');
+      const icon = this.querySelector('i');
+      
+      sidebar.classList.toggle('collapsed');
+      if (sidebar.classList.contains('collapsed')) {
+        icon.classList.remove('fa-chevron-left');
+        icon.classList.add('fa-chevron-right');
+      } else {
+        icon.classList.remove('fa-chevron-right');
+        icon.classList.add('fa-chevron-left');
+      }
+    });
+
+    // Toggle right panel collapse
+    document.getElementById('toggle-right-panel').addEventListener('click', function() {
+      const rightPanel = document.getElementById('right-panel');
+      const icon = this.querySelector('i');
+      
+      rightPanel.classList.toggle('collapsed');
+      if (rightPanel.classList.contains('collapsed')) {
+        icon.classList.remove('fa-chevron-right');
+        icon.classList.add('fa-chevron-left');
+        this.innerHTML = '<i class="fas fa-chevron-left"></i> Toggle Panel';
+      } else {
+        icon.classList.remove('fa-chevron-left');
+        icon.classList.add('fa-chevron-right');
+        this.innerHTML = '<i class="fas fa-chevron-right"></i> Toggle Panel';
+      }
+    });
+
+    // Fullscreen functionality
+    document.getElementById('fullscreen-btn').addEventListener('click', function() {
+      const simulationContainer = document.querySelector('.simulation-container');
+      
+      if (!document.fullscreenElement) {
+        if (simulationContainer.requestFullscreen) {
+          simulationContainer.requestFullscreen();
+        } else if (simulationContainer.webkitRequestFullscreen) {
+          simulationContainer.webkitRequestFullscreen();
+        } else if (simulationContainer.msRequestFullscreen) {
+          simulationContainer.msRequestFullscreen();
+        }
+        logToConsole('Entered fullscreen mode', 'info');
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+        logToConsole('Exited fullscreen mode', 'info');
+      }
+    });
+
+    // Voice recording simulation
+    document.getElementById('voice-btn').addEventListener('click', function() {
+      const icon = this.querySelector('i');
+      if (icon.classList.contains('fa-microphone')) {
+        icon.classList.remove('fa-microphone');
+        icon.classList.add('fa-stop');
+        this.classList.add('recording');
+        logToConsole('Voice recording started...', 'info');
+        
+        // Simulate processing after 3 seconds
+        setTimeout(() => {
+          icon.classList.remove('fa-stop');
+          icon.classList.add('fa-microphone');
+          this.classList.remove('recording');
+          addAIMessage("Based on your query, I've analyzed the current trajectory. The asteroid has a 12% chance of impact based on current parameters. Would you like me to run a deflection simulation?");
+          logToConsole('Voice query processed', 'info');
+        }, 3000);
+      } else {
+        icon.classList.remove('fa-stop');
+        icon.classList.add('fa-microphone');
+        this.classList.remove('recording');
+        logToConsole('Voice recording stopped', 'info');
+      }
+    });
+
+    // AI Chat functionality
+    document.getElementById('ask-btn').addEventListener('click', function() {
+      const question = document.getElementById('q-input').value.trim();
+      if (!question) return;
+      
+      addUserMessage(question);
+      document.getElementById('q-input').value = '';
+      
+      // Simulate AI thinking
+      setTimeout(() => {
+        const responses = [
+          "Based on the current simulation parameters, the impact would release approximately 4.2×10¹⁵ joules of energy, equivalent to 1 megaton of TNT.",
+          "The asteroid's current trajectory shows a close approach in 2038. Deflection maneuvers would need to be executed at least 10 years prior for maximum effectiveness.",
+          "I'm detecting that increasing the asteroid's velocity by 15% would significantly alter its trajectory, reducing impact probability from 18% to 3%.",
+          "The current size estimate suggests a crater diameter of approximately 2.4 kilometers. This would cause regional devastation but not global extinction.",
+          "Based on the impact location you've selected, coastal areas within 200km would experience tsunami waves up to 12 meters in height."
+        ];
+        
+        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+        addAIMessage(randomResponse);
+      }, 1000 + Math.random() * 2000);
+    });
+
+    // Enter key for AI chat
+    document.getElementById('q-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('ask-btn').click();
+      }
+    });
+
+    // Simulate impact button
+    document.getElementById('simulate-btn').addEventListener('click', function() {
+      if (!asteroidData) {
+        logToConsole('Please load asteroid data first', 'warning');
+        return;
+      }
+      
+      logToConsole('Impact simulation started...', 'info');
+      
+      // Show loading state
+      const originalText = this.innerHTML;
+      this.innerHTML = '<div class="loading"></div> <span class="btn-text">Simulating...</span>';
+      this.disabled = true;
+      
+      // Get impact parameters
+      const size = parseFloat(document.getElementById('size-m').value) || asteroidData.diameter;
+      const velocity = parseFloat(document.getElementById('vel-kms').value) || asteroidData.velocity;
+      const density = parseFloat(document.getElementById('density').value) || asteroidData.density;
+      const lat = parseFloat(document.getElementById('impact-lat').value) || 34.05;
+      const lon = parseFloat(document.getElementById('impact-lon').value) || -118.25;
+      const angle = parseFloat(document.getElementById('impact-angle').value) || 45;
+      
+      // Simulate processing - in a real app, this would call your backend API
+      setTimeout(() => {
+        this.innerHTML = originalText;
+        this.disabled = false;
+        
+        // Calculate impact effects (simplified)
+        const energy = calculateImpactEnergy(size, velocity, density);
+        const crater = calculateCraterSize(size, velocity, density, angle);
+        const magnitude = calculateSeismicMagnitude(energy);
+        const tsunami = calculateTsunamiHeight(energy, lat, lon);
+        
+        // Update stats with calculated values
+        document.getElementById('energy').textContent = formatEnergy(energy);
+        document.getElementById('crater').textContent = crater.toFixed(1) + ' km';
+        document.getElementById('magnitude').textContent = magnitude.toFixed(1);
+        document.getElementById('tsunami').textContent = tsunami.toFixed(0) + ' m';
+        
+        logToConsole('Impact simulation completed successfully', 'info');
+        addAIMessage(`Impact simulation completed. The results show a ${crater.toFixed(1)} km crater, seismic magnitude of ${magnitude.toFixed(1)}, and tsunami waves up to ${tsunami.toFixed(0)} meters. Energy released: ${formatEnergy(energy)}.`);
+        
+        // Update chart
+        updateEnergyChart(energy, crater, magnitude, tsunami);
+        
+        // Update simulation status
+        document.getElementById('simulation-status').className = 'status-dot';
+        document.getElementById('simulation-status-text').textContent = 'Completed';
+      }, 2000);
+    });
+
+    // Load data button
+    document.getElementById('load-data').addEventListener('click', function() {
+      loadAsteroidData();
+    });
+
+    // Deflect button
+    document.getElementById('deflect-btn').addEventListener('click', function() {
+      if (!asteroidData) {
+        logToConsole('Please load asteroid data first', 'warning');
+        return;
+      }
+      
+      logToConsole('Initiating deflection simulation...', 'info');
+      
+      // Show loading state
+      const originalText = this.innerHTML;
+      this.innerHTML = '<div class="loading"></div>';
+      this.disabled = true;
+      
+      // Simulate processing
+      setTimeout(() => {
+        this.innerHTML = originalText;
+        this.disabled = false;
+        
+        logToConsole('Deflection simulation completed. Impact probability reduced by 72%.', 'info');
+        addAIMessage("Deflection simulation successful! Using a gravity tractor approach, impact probability has been reduced from 18% to 5%. The maneuver would need to be executed in 2032 for optimal effect.");
+      }, 2500);
+    });
+
+    // Protection method buttons
+    document.getElementById('kinetic-impactor').addEventListener('click', function() {
+      logToConsole('Kinetic impactor deflection method selected', 'info');
+      addAIMessage("The kinetic impactor method involves striking the asteroid with a high-speed projectile to alter its trajectory. This is the method used by NASA's DART mission. For this asteroid, we'd need an impactor mass of approximately 500 kg traveling at 6 km/s.");
+    });
+
+    document.getElementById('gravity-tractor').addEventListener('click', function() {
+      logToConsole('Gravity tractor deflection method selected', 'info');
+      addAIMessage("The gravity tractor method uses a spacecraft to fly near the asteroid, using its gravitational pull to slowly alter the asteroid's path over time. This method requires early detection but is very precise. For this asteroid, we'd need a 20-ton spacecraft operating for 10 years.");
+    });
+
+    document.getElementById('nuclear-deflection').addEventListener('click', function() {
+      logToConsole('Nuclear deflection method selected', 'info');
+      addAIMessage("Nuclear deflection involves detonating a nuclear device near the asteroid surface to vaporize material and create thrust. This is the most powerful method but carries political and safety concerns. For this asteroid, a 1-megaton device detonated 100m from the surface would be sufficient.");
+    });
+
+    // Export data button
+    document.getElementById('export-data').addEventListener('click', function() {
+      logToConsole('Exporting simulation data...', 'info');
+      // In a real app, this would generate and download a data file
+      setTimeout(() => {
+        logToConsole('Simulation data exported successfully', 'info');
+      }, 1000);
+    });
+
+    // ---------- Utility Functions ----------
+    function logToConsole(message, type = 'info') {
+      const consoleEl = document.getElementById('console');
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const className = type === 'info' ? 'console-info' : 
+                        type === 'warning' ? 'console-warning' : 
+                        type === 'error' ? 'console-error' : 'console-info';
+      
+      const line = document.createElement('div');
+      line.className = 'console-line';
+      line.innerHTML = `<span class="console-time">[${time}]</span> <span class="${className}">${message}</span>`;
+      
+      consoleEl.appendChild(line);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    function addUserMessage(message) {
+      const chatEl = document.getElementById('ai-chat');
+      const messageEl = document.createElement('div');
+      messageEl.className = 'ai-message ai-user';
+      messageEl.textContent = message;
+      chatEl.appendChild(messageEl);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function addAIMessage(message) {
+      const chatEl = document.getElementById('ai-chat');
+      const messageEl = document.createElement('div');
+      messageEl.className = 'ai-message ai-bot';
+      messageEl.textContent = message;
+      chatEl.appendChild(messageEl);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    // Impact calculation functions (simplified)
+    function calculateImpactEnergy(diameter, velocity, density) {
+      // Volume of sphere = (4/3) * π * r^3
+      const radius = diameter / 2;
+      const volume = (4/3) * Math.PI * Math.pow(radius, 3);
+      // Mass = density * volume
+      const mass = density * volume;
+      // Kinetic energy = 0.5 * m * v^2
+      // Convert velocity from km/s to m/s
+      const velocityMS = velocity * 1000;
+      return 0.5 * mass * Math.pow(velocityMS, 2);
+    }
+
+    function calculateCraterSize(diameter, velocity, density, angle) {
+      // Simplified crater diameter calculation
+      const energy = calculateImpactEnergy(diameter, velocity, density);
+      // Crater diameter in km (very simplified)
+      return Math.pow(energy, 1/3.4) / 10000;
+    }
+
+    function calculateSeismicMagnitude(energy) {
+      // Convert energy to seismic magnitude (simplified)
+      return Math.log10(energy) / 1.5 - 5.5;
+    }
+
+    function calculateTsunamiHeight(energy, lat, lon) {
+      // Very simplified tsunami height calculation
+      // In reality, this depends on many factors including ocean depth, coastline shape, etc.
+      const baseHeight = Math.pow(energy, 1/3) / 1e6;
+      // Add some randomness for demo purposes
+      return baseHeight * (0.8 + Math.random() * 0.4);
+    }
+
+    function formatEnergy(energy) {
+      if (energy >= 1e15) {
+        return (energy / 1e15).toFixed(1) + '×10¹⁵ J';
+      } else if (energy >= 1e12) {
+        return (energy / 1e12).toFixed(1) + '×10¹² J';
+      } else {
+        return energy.toExponential(2) + ' J';
+      }
+    }
+
+    // Initialize energy chart
+    const energyCtx = document.getElementById('energyChart').getContext('2d');
+    let energyChart = new Chart(energyCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Impact Energy', 'Crater Size', 'Seismic Mag', 'Tsunami Height'],
+        datasets: [{
+          label: 'Impact Effects',
+          data: [0, 0, 0, 0],
+          backgroundColor: [
+            'rgba(0, 212, 255, 0.7)',
+            'rgba(0, 184, 204, 0.7)',
+            'rgba(0, 149, 179, 0.7)',
+            'rgba(255, 171, 0, 0.7)'
+          ],
+          borderColor: [
+            'rgba(0, 212, 255, 1)',
+            'rgba(0, 184, 204, 1)',
+            'rgba(0, 149, 179, 1)',
+            'rgba(255, 171, 0, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+
+    function updateEnergyChart(energy, crater, magnitude, tsunami) {
+      // Normalize values for the chart (0-100 scale)
+      const maxEnergy = 1e16; // 10^16 J as maximum for scaling
+      const maxCrater = 10; // 10 km as maximum for scaling
+      const maxMagnitude = 8; // 8 as maximum for scaling
+      const maxTsunami = 50; // 50 m as maximum for scaling
+      
+      const normalizedData = [
+        Math.min(100, (energy / maxEnergy) * 100),
+        Math.min(100, (crater / maxCrater) * 100),
+        Math.min(100, (magnitude / maxMagnitude) * 100),
+        Math.min(100, (tsunami / maxTsunami) * 100)
+      ];
+      
+      energyChart.data.datasets[0].data = normalizedData;
+      energyChart.update();
+    }
+
+    // Initialize the application
+    window.addEventListener('DOMContentLoaded', () => {
+      logToConsole('AstroImpact Simulator initializing...', 'info');
+      loadAsteroidData();
+      checkBackendStatus();
+      
+      // Initialize with some console messages
+      setTimeout(() => {
+        logToConsole('3D visualization engine ready', 'info');
+        logToConsole('AI analysis module activated', 'info');
+        logToConsole('Impact calculation models loaded', 'info');
+      }, 500);
+    });
+  </script>
+</body>
+</html>
