@@ -4,8 +4,9 @@ from services.nasa_service import get_neo_feed, get_asteroid_details
 from services.usgs_service import get_recent_earthquakes, get_tsunami_alerts
 from services.simulation import simulate_impact
 from services.orbit import kepler_to_cartesian
-
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def home():

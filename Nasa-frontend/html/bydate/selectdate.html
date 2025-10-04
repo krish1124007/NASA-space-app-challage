@@ -1073,7 +1073,7 @@
                 updateLoadingProgress(20);
 
                 // Fetch data from your Flask backend with CORS mode
-                const response = await fetch(`http://127.0.0.1:5000/?start_date=${startDate}&end_date=${endDate}`, {
+                const response = await fetch(`http://127.0.0.1:5000/api/neo/feed?start_date=${startDate}&end_date=${endDate}`, {
                     method: 'GET',
                     mode: 'cors',
                     headers: {
