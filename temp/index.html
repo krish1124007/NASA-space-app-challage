@@ -377,7 +377,6 @@
             padding: 30px 50px;
             border-radius: 15px;
             border: 2px solid rgba(100, 150, 255, 0.5);
-            text-align: center;
         }
         .progress-bar {
             width: 100%;
@@ -447,14 +446,14 @@
                 <div class="section-title">🌑 Asteroid Data</div>
                 <div class="input-group">
                     <label>Asteroid ID (NASA)</label>
-                    <p type="text" id="asteroid-id"></p>
+                    <input type="text" id="asteroid-id" value="3542519" placeholder="Enter asteroid ID">
                 </div>
                 <button class="btn btn-success" id="btn-fetch">🔄 Fetch from NASA API</button>
                 
                 <div id="asteroid-info-display">
                     <div class="info-row">
                         <span class="info-label">Name:</span>
-                        <span class="info-value" id="ast-name">-</span>
+                        <span class="info-value" id="ast-name">Loading...</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">ID:</span>
@@ -489,43 +488,43 @@
                 <div class="input-group">
                     <label>Semi-major Axis (a) - AU</label>
                     <div class="input-row">
-                        <input type="range" id="slider-a" min="0.5" max="3" step="0.01" value="1">
-                        <input type="number" id="input-a" min="0.5" max="3" step="0.01" value="1">
+                        <input type="range" id="slider-a" min="0.5" max="3" step="0.01" value="0.682">
+                        <input type="number" id="input-a" min="0.5" max="3" step="0.01" value="0.682">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Eccentricity (e)</label>
                     <div class="input-row">
-                        <input type="range" id="slider-e" min="0" max="0.9" step="0.001" value="0">
-                        <input type="number" id="input-e" min="0" max="0.9" step="0.001" value="0">
+                        <input type="range" id="slider-e" min="0" max="0.9" step="0.001" value="0.676">
+                        <input type="number" id="input-e" min="0" max="0.9" step="0.001" value="0.676">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Inclination (i) - degrees</label>
                     <div class="input-row">
-                        <input type="range" id="slider-i" min="0" max="180" step="0.1" value="0">
-                        <input type="number" id="input-i" min="0" max="180" step="0.1" value="0">
+                        <input type="range" id="slider-i" min="0" max="180" step="0.1" value="12.59">
+                        <input type="number" id="input-i" min="0" max="180" step="0.1" value="12.59">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>RAAN (Ω) - degrees</label>
                     <div class="input-row">
-                        <input type="range" id="slider-omega" min="0" max="360" step="0.1" value="0">
-                        <input type="number" id="input-omega" min="0" max="360" step="0.1" value="0">
+                        <input type="range" id="slider-omega" min="0" max="360" step="0.1" value="306.51">
+                        <input type="number" id="input-omega" min="0" max="360" step="0.1" value="306.51">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Arg. of Periapsis (ω) - degrees</label>
                     <div class="input-row">
-                        <input type="range" id="slider-w" min="0" max="360" step="0.1" value="0">
-                        <input type="number" id="input-w" min="0" max="360" step="0.1" value="0">
+                        <input type="range" id="slider-w" min="0" max="360" step="0.1" value="195.65">
+                        <input type="number" id="input-w" min="0" max="360" step="0.1" value="195.65">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Mean Anomaly (M₀) - degrees</label>
                     <div class="input-row">
-                        <input type="range" id="slider-m" min="0" max="360" step="0.1" value="0">
-                        <input type="number" id="input-m" min="0" max="360" step="0.1" value="0">
+                        <input type="range" id="slider-m" min="0" max="360" step="0.1" value="194.38">
+                        <input type="number" id="input-m" min="0" max="360" step="0.1" value="194.38">
                     </div>
                 </div>
                 <button class="btn btn-success" id="btn-recompute">🔄 Recompute Orbit</button>
@@ -609,7 +608,7 @@
         </div>
 
         <div id="right-panel">
-            <div id="loading">⏳ Please fetch asteroid data to begin...</div>
+            <div id="loading">⏳ Initializing simulation...</div>
             <div id="collision-impact">
                 <h2>⚠️ COLLISION DETECTED!</h2>
                 <p style="font-size: 20px;">Asteroid has impacted Earth</p>
@@ -729,9 +728,23 @@
         let asteroidOrbitLine = null;
         let impactMarker = null;
 
-        // Asteroid data - initialize as null to prevent animation until data is loaded
-        let asteroidData = null;
-        let isDataLoaded = false;
+        // Asteroid data
+        let asteroidData = {
+            name: "(2010 PK9)",
+            id: "3542519",
+            orbitClass: "Aten",
+            hazardous: true,
+            diameter: 0.187,
+            magnitude: 21.81,
+            a: 0.682,
+            e: 0.676,
+            i: 12.59,
+            omega: 306.51,
+            w: 195.65,
+            M0: 194.38,
+            approachDate: "1900-Jun-01",
+            approachVelocity: 30.94
+        };
 
         // Simulation state
         let time = 0;
@@ -806,20 +819,15 @@
 
         // Fetch asteroid data from backend
         async function fetchAsteroidData() {
-          const asteroidId = JSON.parse(localStorage.getItem("asteroid")).id;
-          console.log(asteroidId)
-          document.getElementById('asteroid-id').innerHTML = asteroidId
+            const asteroidId = document.getElementById('asteroid-id').value;
             document.getElementById('loading').style.display = 'block';
-            document.getElementById('loading').textContent = '⏳ Fetching asteroid data...';
             
             try {
-              console.log("trigger")
                 const response = await fetch(`${BACKEND_URL}/asteroid/${asteroidId}`);
                 const data = await response.json();
                 
                 if (data.error) {
                     alert('Error: ' + data.error);
-                    document.getElementById('loading').style.display = 'none';
                     return;
                 }
                 
@@ -841,24 +849,18 @@
                     approachVelocity: parseFloat(data.close_approach?.relative_velocity_km_s) || 0
                 };
                 
-                isDataLoaded = true;
-                
                 updateAsteroidDisplay();
                 updateOrbitalInputs();
                 recomputeOrbit();
                 
-                // Hide loading screen
-                document.getElementById('loading').style.display = 'none';
-                
             } catch (error) {
                 alert('Failed to connect to backend: ' + error.message);
+            } finally {
                 document.getElementById('loading').style.display = 'none';
             }
         }
 
         function updateAsteroidDisplay() {
-            if (!asteroidData) return;
-            
             document.getElementById('ast-name').textContent = asteroidData.name;
             document.getElementById('ast-id').textContent = asteroidData.id;
             document.getElementById('ast-class').textContent = asteroidData.orbitClass;
@@ -872,8 +874,6 @@
         }
 
         function updateOrbitalInputs() {
-            if (!asteroidData) return;
-            
             document.getElementById('slider-a').value = asteroidData.a;
             document.getElementById('input-a').value = asteroidData.a;
             document.getElementById('slider-e').value = asteroidData.e;
@@ -889,8 +889,6 @@
         }
 
         function recomputeOrbit() {
-            if (!asteroidData) return;
-            
             if (asteroidOrbitLine) scene.remove(asteroidOrbitLine);
             
             const scaledA = asteroidData.a * AU_TO_UNITS;
@@ -910,11 +908,6 @@
 
         // Collision detection with parameter sensitivity
         function runCollisionAnalysis() {
-            if (!asteroidData) {
-                alert('Please fetch asteroid data first!');
-                return;
-            }
-            
             const samples = parseInt(document.getElementById('input-samples').value);
             const progressBar = document.getElementById('progress-bar');
             const progressFill = document.getElementById('progress-fill');
@@ -1081,11 +1074,6 @@
 
         // AI Agent Analysis
         function analyzeWithAI() {
-            if (!asteroidData) {
-                alert('Please fetch asteroid data first!');
-                return;
-            }
-            
             const aiResult = document.getElementById('ai-result');
             const aiText = document.getElementById('ai-text');
             
@@ -1201,18 +1189,14 @@
             
             slider.addEventListener('input', () => {
                 input.value = slider.value;
-                if (asteroidData) {
-                    const key = param === 'omega' ? 'omega' : param === 'w' ? 'w' : param === 'm' ? 'M0' : param;
-                    asteroidData[key] = parseFloat(slider.value);
-                }
+                const key = param === 'omega' ? 'omega' : param === 'w' ? 'w' : param === 'm' ? 'M0' : param;
+                asteroidData[key] = parseFloat(slider.value);
             });
             
             input.addEventListener('input', () => {
                 slider.value = input.value;
-                if (asteroidData) {
-                    const key = param === 'omega' ? 'omega' : param === 'w' ? 'w' : param === 'm' ? 'M0' : param;
-                    asteroidData[key] = parseFloat(input.value);
-                }
+                const key = param === 'omega' ? 'omega' : param === 'w' ? 'w' : param === 'm' ? 'M0' : param;
+                asteroidData[key] = parseFloat(input.value);
             });
         }
 
@@ -1296,10 +1280,6 @@
         });
 
         document.getElementById('btn-export-json').addEventListener('click', () => {
-            if (!asteroidData) {
-                alert('Please fetch asteroid data first!');
-                return;
-            }
             const exportData = {
                 asteroid: asteroidData,
                 timestamp: new Date().toISOString(),
@@ -1314,22 +1294,17 @@
             link.click();
         });
 
-        // Initialize - DON'T call these until data is loaded
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('loading').textContent = '⏳ Please fetch asteroid data to begin...';
+        // Initialize
+        updateAsteroidDisplay();
+        recomputeOrbit();
+        document.getElementById('loading').style.display = 'none';
 
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
 
-            // Only animate if data is loaded
-            if (!isDataLoaded || !asteroidData) {
-                renderer.render(scene, camera);
-                return;
-            }
-
             if (!isPaused) {
-                // Update Earth position
+                // Update Earth position (FIXED: Earth now moves in orbit)
                 const earthAngle = (time / 365.25) * 2 * Math.PI;
                 const earthE = solveKeplerEquation(earthAngle, earthEccentricity);
                 const earthR = earthOrbitRadius * (1 - earthEccentricity * Math.cos(earthE));

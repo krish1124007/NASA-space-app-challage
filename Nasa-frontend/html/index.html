@@ -4,25 +4,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asteroid Defender | Interactive Impact Simulation</title>
+    <title>NASA Space Simulation | Earth & Space Data for Future Exploration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --nasa-navy: #0B3D91;
+            --nasa-black: #1E1E1E;
+            --nasa-white: #FFFFFF;
+            --nasa-blue: #29B6F6;
+            --nasa-dark: #0A0E17;
+            --nasa-accent: #00A8FF;
+            --nasa-success: #00E676;
+            --nasa-warning: #FFAB00;
+            --nasa-danger: #FF5252;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Rajdhani', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', 'Exo 2', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
             overflow-x: hidden;
-            color: white;
-            background: #000;
+            color: var(--nasa-white);
+            background: var(--nasa-dark);
             background-image:
-                radial-gradient(circle at 20% 30%, rgba(45, 15, 90, 0.7) 0%, transparent 40%),
-                radial-gradient(circle at 80% 20%, rgba(20, 30, 100, 0.7) 0%, transparent 40%),
-                radial-gradient(circle at 40% 80%, rgba(70, 15, 60, 0.7) 0%, transparent 40%);
+                radial-gradient(circle at 20% 30%, rgba(11, 61, 145, 0.3) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(41, 182, 246, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 40% 80%, rgba(0, 168, 255, 0.15) 0%, transparent 40%);
+            position: relative;
+        }
+
+        /* Space Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="0.5" fill="white" opacity="0.8"><animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite"/></circle><circle cx="80" cy="30" r="0.3" fill="white" opacity="0.6"><animate attributeName="opacity" values="0.6;0.1;0.6" dur="3s" repeatCount="indefinite"/></circle><circle cx="40" cy="70" r="0.4" fill="white" opacity="0.7"><animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.5s" repeatCount="indefinite"/></circle><circle cx="90" cy="80" r="0.2" fill="white" opacity="0.5"><animate attributeName="opacity" values="0.5;0.1;0.5" dur="4s" repeatCount="indefinite"/></circle><circle cx="10" cy="60" r="0.6" fill="white" opacity="0.9"><animate attributeName="opacity" values="0.9;0.3;0.9" dur="1.8s" repeatCount="indefinite"/></circle></svg>') repeat;
+            z-index: -2;
+            animation: twinkle 20s linear infinite;
+        }
+
+        @keyframes twinkle {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-100px); }
         }
 
         .video-background {
@@ -50,7 +81,7 @@
             pointer-events: none;
         }
 
-        /* Enhanced Gaming Style Navbar */
+        /* NASA-Style Navbar */
         .navbar {
             position: fixed;
             top: 0;
@@ -61,51 +92,51 @@
             justify-content: space-between;
             align-items: center;
             z-index: 100;
-            background: rgba(10, 10, 20, 0.9);
-            backdrop-filter: blur(15px);
-            border-bottom: 2px solid #00e5ff;
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+            background: linear-gradient(135deg, rgba(11, 61, 145, 0.95), rgba(30, 30, 30, 0.95));
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--nasa-blue);
+            box-shadow: 0 4px 20px rgba(11, 61, 145, 0.3);
             transition: all 0.4s ease;
             font-family: 'Orbitron', sans-serif;
         }
 
         .navbar.scrolled {
             padding: 10px 5%;
-            background: rgba(5, 5, 15, 0.95);
-            border-bottom: 2px solid #ff00c8;
-            box-shadow: 0 0 15px rgba(255, 0, 200, 0.4);
+            background: linear-gradient(135deg, rgba(11, 61, 145, 0.98), rgba(30, 30, 30, 0.98));
+            border-bottom: 2px solid var(--nasa-accent);
+            box-shadow: 0 4px 25px rgba(0, 168, 255, 0.4);
         }
 
         .logo {
             font-size: 28px;
             font-weight: 800;
-            color: #fff;
+            color: var(--nasa-white);
             text-decoration: none;
             display: flex;
             align-items: center;
-            text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff;
+            text-shadow: 0 0 10px var(--nasa-blue), 0 0 20px var(--nasa-blue);
             letter-spacing: 1px;
             transition: all 0.3s ease;
         }
 
         .logo:hover {
-            text-shadow: 0 0 15px #00e5ff, 0 0 30px #00e5ff;
+            text-shadow: 0 0 15px var(--nasa-accent), 0 0 30px var(--nasa-accent);
         }
 
         .logo i {
             margin-right: 10px;
-            color: #00e5ff;
-            filter: drop-shadow(0 0 5px #00e5ff);
+            color: var(--nasa-blue);
+            filter: drop-shadow(0 0 5px var(--nasa-blue));
         }
 
-        /* Enhanced Navigation */
+        /* NASA Navigation */
         .nav-menu {
             display: flex;
             gap: 5px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(30, 30, 30, 0.8);
             border-radius: 12px;
             padding: 5px;
-            border: 1px solid rgba(0, 229, 255, 0.5);
+            border: 1px solid rgba(41, 182, 246, 0.5);
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
@@ -123,15 +154,15 @@
         }
 
         .nav-item:hover {
-            color: #fff;
-            background: linear-gradient(45deg, rgba(0, 229, 255, 0.3), rgba(255, 0, 200, 0.3));
-            text-shadow: 0 0 10px #fff;
+            color: var(--nasa-white);
+            background: linear-gradient(45deg, rgba(41, 182, 246, 0.3), rgba(0, 168, 255, 0.3));
+            text-shadow: 0 0 10px var(--nasa-white);
         }
 
         .nav-item.active {
-            color: #fff;
-            background: linear-gradient(45deg, #00e5ff, #ff00c8);
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.7);
+            color: var(--nasa-white);
+            background: linear-gradient(45deg, var(--nasa-blue), var(--nasa-accent));
+            box-shadow: 0 0 15px rgba(41, 182, 246, 0.7);
         }
 
         .nav-item.active::after {
@@ -142,7 +173,7 @@
             transform: translateX(-50%);
             width: 70%;
             height: 3px;
-            background: linear-gradient(45deg, #00e5ff, #ff00c8);
+            background: linear-gradient(45deg, var(--nasa-blue), var(--nasa-accent));
             border-radius: 3px;
         }
 
@@ -232,7 +263,7 @@
         .hero-title {
             font-size: 5rem;
             margin-bottom: 30px;
-            background: linear-gradient(45deg, #00e5ff, #ff00c8, #00e5ff);
+            background: linear-gradient(45deg, var(--nasa-blue), var(--nasa-accent), var(--nasa-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
@@ -251,12 +282,13 @@
             font-weight: 300;
             line-height: 1.6;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            font-family: 'Roboto', sans-serif;
         }
 
         .hero-btn {
             padding: 15px 40px;
-            background: linear-gradient(45deg, #00e5ff, #ff00c8);
-            color: white;
+            background: linear-gradient(45deg, var(--nasa-blue), var(--nasa-accent));
+            color: var(--nasa-white);
             border: none;
             border-radius: 10px;
             font-weight: 600;
@@ -265,7 +297,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             font-family: 'Orbitron', sans-serif;
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+            box-shadow: 0 0 20px rgba(41, 182, 246, 0.5);
             font-size: 1.2rem;
             position: relative;
             overflow: hidden;
@@ -273,7 +305,7 @@
 
         .hero-btn:hover {
             transform: translateY(-5px);
-            box-shadow: 0 0 30px rgba(255, 0, 200, 0.7);
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.7);
         }
 
         .hero-btn::before {
@@ -831,29 +863,29 @@
 
     <div class="overlay"></div>
 
-    <!-- Gaming Style Navbar -->
+    <!-- NASA-Style Navbar -->
     <nav class="navbar">
-        <a href="#" class="logo"><i class="fas fa-shield-alt"></i> ASTEROID DEFENDER</a>
+        <a href="#" class="logo"><i class="fas fa-rocket"></i> NASA SPACE SIM</a>
         
         <div class="nav-menu">
-            <a href="#" class="nav-item active">Dashboard</a>
-            <a href="#" class="nav-item">Simulator</a>
-            <a href="#" class="nav-item">Impact Scenarios</a>
-            <a href="#" class="nav-item">Mitigation</a>
-            <a href="#" class="nav-item">Data Center</a>
+            <a href="#" class="nav-item active">Home</a>
+            <a href="./bydate/simulation.html" class="nav-item">Simulation</a>
+            <a href="#" class="nav-item">Results</a>
+            <a href="./about.html" class="nav-item">About</a>
+            <a href="./team.html" class="nav-item">Team</a>
         </div>
         
         <div class="nav-actions">
             <button class="btn-login">Mission Control</button>
-            <button class="btn-signup">Launch Sim</button>
+            <button class="btn-signup">Run Simulation 🚀</button>
         </div>
     </nav>
     
     <!-- Hero Section -->
     <div class="hero-section">
-        <h1 class="hero-title">DEFEND EARTH FROM COSMIC THREATS</h1>
-        <p class="hero-subtitle">Your mission: prevent catastrophic asteroid impacts using real NASA and USGS data. Simulate, analyze, and execute planetary defense strategies to protect humanity.</p>
-        <a href="./menu.html"><button class="hero-btn">Let's Go</button></a>
+        <h1 class="hero-title">SIMULATING EARTH & SPACE DATA FOR THE FUTURE OF EXPLORATION</h1>
+        <p class="hero-subtitle">Experience NASA-grade simulations with real-time data from space missions. Analyze orbital mechanics, predict impact scenarios, and explore the cosmos through interactive visualizations powered by authentic NASA and USGS datasets.</p>
+        <a href="./menu.html"><button class="hero-btn">Run Simulation 🚀</button></a>
     </div>
 
     <!-- Gaming Toolbar -->
@@ -887,31 +919,31 @@
     <div id="container">
         <!-- Features Section -->
         <div class="content-section">
-            <h2 class="section-title">Our <span>Capabilities</span></h2>
+            <h2 class="section-title">NASA <span>Capabilities</span></h2>
             <div class="cards-container">
                 <div class="space-card">
                     <div class="card-icon">
-                        <i class="fas fa-radar"></i>
+                        <i class="fas fa-satellite-dish"></i>
                     </div>
-                    <h3>Real-Time Tracking</h3>
-                    <p>Monitor near-Earth objects with live data from NASA's NEO observation network. Track trajectories, velocities, and potential impact zones with precision.</p>
-                    <button class="card-button">Track Now</button>
+                    <h3>Real-Time Data</h3>
+                    <p>Access live NASA NEO data, orbital mechanics, and space mission telemetry. Experience authentic space data visualization with real-time updates from NASA's observation network.</p>
+                    <button class="card-button">View Data</button>
                 </div>
                 <div class="space-card">
                     <div class="card-icon">
-                        <i class="fas fa-bullseye"></i>
+                        <i class="fas fa-globe"></i>
                     </div>
-                    <h3>Impact Prediction</h3>
-                    <p>Calculate potential impact energy, crater dimensions, and environmental effects using advanced scientific models and geological data.</p>
-                    <button class="card-button">Run Analysis</button>
+                    <h3>3D Visualization</h3>
+                    <p>Explore interactive 3D models of Earth, asteroids, and orbital trajectories. Powered by Three.js with NASA-accurate celestial mechanics and real-time rendering.</p>
+                    <button class="card-button">Explore</button>
                 </div>
                 <div class="space-card">
                     <div class="card-icon">
-                        <i class="fas fa-satellite"></i>
+                        <i class="fas fa-chart-line"></i>
                     </div>
-                    <h3>Deflection Missions</h3>
-                    <p>Plan and execute asteroid deflection strategies using kinetic impactors, gravity tractors, or nuclear options to alter trajectories.</p>
-                    <button class="card-button">Launch Mission</button>
+                    <h3>Scientific Analysis</h3>
+                    <p>Perform advanced calculations using NASA's scientific models. Analyze impact scenarios, orbital predictions, and space mission trajectories with professional-grade tools.</p>
+                    <button class="card-button">Analyze</button>
                 </div>
             </div>
         </div>
@@ -919,65 +951,65 @@
         <!-- Text Scroll Animation Section -->
         <div class="text-scroll-section">
             <div class="scroll-text-container">
-                <div class="scroll-text">Every day, our planet is bombarded by tons of cosmic dust and small meteoroids.</div>
-                <div class="scroll-text">But occasionally, larger objects cross Earth's path - objects that could cause regional or global devastation.</div>
-                <div class="scroll-text highlight">Our mission is to detect these threats early and develop strategies to protect our world.</div>
-                <div class="scroll-text">Using data from NASA's Near-Earth Object Program and advanced simulation technologies,</div>
-                <div class="scroll-text">We can predict impact scenarios and test deflection methods before it's too late.</div>
-                <div class="scroll-text highlight">The future of planetary defense begins here.</div>
+                <div class="scroll-text">NASA's mission extends far beyond our atmosphere, exploring the vast cosmos and protecting our home planet.</div>
+                <div class="scroll-text">Through advanced space technology and real-time data collection, we monitor near-Earth objects and celestial phenomena.</div>
+                <div class="scroll-text highlight">This simulation platform brings NASA's space data directly to your fingertips.</div>
+                <div class="scroll-text">Experience authentic orbital mechanics, impact predictions, and space mission trajectories using real NASA datasets.</div>
+                <div class="scroll-text">From asteroid tracking to planetary defense, explore the science that keeps us safe in space.</div>
+                <div class="scroll-text highlight">The future of space exploration starts with understanding our cosmic neighborhood.</div>
             </div>
         </div>
 
         <!-- Statistics Section -->
         <div class="stats-section">
-            <h2 class="section-title">Planetary <span>Defense Stats</span></h2>
+            <h2 class="section-title">NASA <span>Mission Data</span></h2>
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number">25,000+</div>
-                    <div class="stat-label">Tracked NEOs</div>
+                    <div class="stat-label">Tracked Near-Earth Objects</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">2,200</div>
-                    <div class="stat-label">Potentially Hazardous</div>
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Active Space Missions</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">100M</div>
-                    <div class="stat-label">Years Major Impact</div>
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Real-Time Monitoring</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number">2025</div>
-                    <div class="stat-label">Current Threat</div>
+                    <div class="stat-label">Current Mission Year</div>
                 </div>
             </div>
         </div>
 
         <!-- Additional Features Section -->
         <div class="content-section">
-            <h2 class="section-title">Advanced <span>Technologies</span></h2>
+            <h2 class="section-title">NASA <span>Technologies</span></h2>
             <div class="cards-container">
                 <div class="space-card">
                     <div class="card-icon">
-                        <i class="fas fa-missile"></i>
+                        <i class="fas fa-satellite"></i>
                     </div>
-                    <h3>Kinetic Impactors</h3>
-                    <p>Deploy spacecraft to collide with asteroids and alter their trajectories. Calculate required mass, velocity, and impact timing for successful deflection missions.</p>
-                    <button class="card-button">Deploy Impactor</button>
+                    <h3>Orbital Mechanics</h3>
+                    <p>Experience authentic NASA orbital calculations with real-time trajectory predictions. Simulate spacecraft missions using Kepler's laws and gravitational physics.</p>
+                    <button class="card-button">Launch Mission</button>
                 </div>
                 <div class="space-card">
                     <div class="card-icon">
-                        <i class="fas fa-magnet"></i>
+                        <i class="fas fa-chart-area"></i>
                     </div>
-                    <h3>Gravity Tractors</h3>
-                    <p>Use spacecraft gravity to gradually pull asteroids off collision courses. Simulate long-term orbital changes through gravitational attraction over extended periods.</p>
-                    <button class="card-button">Activate Tractor</button>
+                    <h3>Data Visualization</h3>
+                    <p>Transform complex NASA datasets into interactive 3D visualizations. Explore space missions, orbital paths, and celestial phenomena with professional-grade tools.</p>
+                    <button class="card-button">Visualize Data</button>
                 </div>
                 <div class="space-card">
                     <div class="card-icon">
-                        <i class="fas fa-atom"></i>
+                        <i class="fas fa-rocket"></i>
                     </div>
-                    <h3>Nuclear Options</h3>
-                    <p>Evaluate nuclear deflection scenarios for large or short-warning threats. Model standoff detonations and subsurface explosions for maximum effect.</p>
-                    <button class="card-button">Assess Options</button>
+                    <h3>Mission Simulation</h3>
+                    <p>Run realistic space mission simulations using NASA's scientific models. Test launch scenarios, orbital maneuvers, and mission outcomes with authentic data.</p>
+                    <button class="card-button">Simulate Mission</button>
                 </div>
             </div>
         </div>
@@ -986,19 +1018,19 @@
     <!-- Footer -->
     <div class="footer">
         <div class="footer-content">
-            <div class="footer-logo">ASTEROID DEFENDER</div>
+            <div class="footer-logo">NASA SPACE SIMULATION</div>
 
             <div class="footer-links">
-                <a href="#">Dashboard</a>
-                <a href="#">Simulator</a>
-                <a href="#">NASA Data</a>
-                <a href="#">USGS Data</a>
-                <a href="#">Research</a>
-                <a href="#">Contact</a>
+                <a href="#">Home</a>
+                <a href="./bydate/simulation.html">Simulation</a>
+                <a href="#">Results</a>
+                <a href="./about.html">About</a>
+                <a href="./team.html">Team</a>
+                <a href="https://nasa.gov" target="_blank">NASA Data</a>
             </div>
 
             <div class="social-links">
-                <a href="#"><i class="fab fa-nasa"></i></a>
+                <a href="https://nasa.gov" target="_blank"><i class="fab fa-nasa"></i></a>
                 <a href="#"><i class="fas fa-satellite"></i></a>
                 <a href="#"><i class="fas fa-globe"></i></a>
                 <a href="#"><i class="fab fa-youtube"></i></a>
@@ -1006,7 +1038,7 @@
             </div>
 
             <div class="copyright">
-                &copy; 2025 Asteroid Defender. All rights reserved. | Powered by NASA NEO API & USGS Data | Designed for planetary defense education and simulation
+                &copy; 2025 NASA Space Simulation Challenge. All rights reserved. | Powered by NASA NEO API & USGS Data | Designed for space exploration education and research
             </div>
         </div>
     </div>
@@ -1175,12 +1207,27 @@
             const heroBtn = document.querySelector('.hero-btn');
             if (heroBtn) {
                 heroBtn.addEventListener('click', function() {
-                    // Scroll to features section
-                    document.querySelector('.content-section').scrollIntoView({ 
-                        behavior: 'smooth' 
-                    });
+                    // Navigate to simulation page
+                    window.location.href = './bydate/simulation.html';
                 });
             }
+
+            // Smooth scroll for navigation links
+            const navLinks = document.querySelectorAll('.nav-item');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId && targetId.startsWith('#')) {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ 
+                                behavior: 'smooth' 
+                            });
+                        }
+                    }
+                });
+            });
         });
     </script>
 </body>

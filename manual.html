@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Asteroid Trajectory & Collision Calculation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 40px;
+      background-color: #f4f4f4;
+      color: #222;
+    }
+    h1, h2, h3 {
+      color: #2a6ebb;
+    }
+    code {
+      background-color: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .formula {
+      background-color: #eef;
+      padding: 10px;
+      border-left: 4px solid #2a6ebb;
+      margin: 10px 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin: 20px 0;
+    }
+    table, th, td {
+      border: 1px solid #999;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    .qa {
+      background-color: #fff8dc;
+      padding: 10px;
+      border-left: 4px solid #ff9900;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Asteroid Trajectory & Earth Collision Calculation</h1>
+
+<p>This page explains step-by-step how we calculate asteroid trajectories, miss distances, and possible collision zones on Earth when orbital parameters are changed. It also explains the scientific reasoning behind each step.</p>
+
+<h2>1. Orbital Parameters of Asteroid</h2>
+<p>Every asteroid orbit is defined by these parameters:</p>
+<table>
+  <tr><th>Parameter</th><th>Description</th></tr>
+  <tr><td>Velocity (v)</td><td>Speed of the asteroid along its orbit in km/s</td></tr>
+  <tr><td>Inclination (i)</td><td>Angle of the asteroid orbit with respect to Earth's orbital plane (degrees)</td></tr>
+  <tr><td>Semi-Major Axis (a)</td><td>Average distance from the asteroid to the Sun (in AU)</td></tr>
+  <tr><td>Eccentricity (e)</td><td>Shape of the orbit (0=circle, 0-1=ellipse)</td></tr>
+  <tr><td>Longitude of ascending node (Ω)</td><td>Orientation of orbit in space</td></tr>
+  <tr><td>Argument of perihelion (ω)</td><td>Location of closest approach to the Sun in orbit</td></tr>
+  <tr><td>Mean anomaly (M)</td><td>Position of asteroid along orbit at specific epoch</td></tr>
+</table>
+
+<h2>2. Trajectory Calculation</h2>
+<p>The asteroid's orbital energy can be calculated as:</p>
+<div class="formula">
+  <strong>Orbital Energy (ε):</strong><br>
+  <code>ε = - μ / (2a)</code><br>
+  Where: <br>
+  μ = 1.327 × 10<sup>11</sup> km³/s² (Sun's gravitational parameter)<br>
+  a = semi-major axis (AU)
+</div>
+
+<p>Asteroid position in 3D space (Earth-centered) can be calculated using orbital elements:</p>
+<div class="formula">
+  x = r (cos(Ω)cos(θ + ω) - sin(Ω)sin(θ + ω)cos(i))<br>
+  y = r (sin(Ω)cos(θ + ω) + cos(Ω)sin(θ + ω)cos(i))<br>
+  z = r (sin(θ + ω)sin(i))<br>
+  r = distance from Sun at point of orbit, θ = true anomaly at time t
+</div>
+
+<p>For simplified miss distance:</p>
+<div class="formula">
+  <strong>Miss Distance:</strong><br>
+  <code>miss_distance = sqrt((x_a - x_e)^2 + (y_a - y_e)^2 + (z_a - z_e)^2)</code><br>
+  Where x_a, y_a, z_a = asteroid coordinates, x_e, y_e, z_e = Earth coordinates at same time
+</div>
+
+<h2>3. Detecting Possible Collision</h2>
+<p>If the asteroid’s trajectory crosses Earth's radius, a collision is possible:</p>
+<div class="formula">
+  <strong>Collision Probability:</strong><br>
+  <code>P = exp(-miss_distance / (Earth_radius × 10)) × 100%</code><br>
+  Earth_radius = 6371 km
+</div>
+
+<h3>4. Estimating Impact Location</h3>
+<p>We can roughly estimate latitude and longitude:</p>
+<div class="formula">
+  Latitude ≈ Random between -30° to +30° + (Inclination / 3)<br>
+  Longitude ≈ Random between -180° to +180°
+</div>
+<p>Impact range depends on asteroid size, energy, and entry angle:</p>
+<div class="formula">
+  Impact Range ≈ Random 200 – 700 km (depends on asteroid parameters)
+</div>
+
+<h2>5. Propagation & Monte Carlo Simulation</h2>
+<p>For accurate predictions:</p>
+<ol>
+  <li>Take initial orbital elements from NASA NEO API.</li>
+  <li>Propagate orbit using Keplerian equations to the future.</li>
+  <li>Run <strong>Monte Carlo simulation</strong> (e.g., 5000 samples) to account for uncertainties.</li>
+  <li>Calculate distance from Earth at closest approach for each sample.</li>
+  <li>Transform 3D vectors to Earth coordinates (lat/lon) to visualize impact zones.</li>
+  <li>Count number of hits → estimate collision probability.</li>
+</ol>
+
+<h2>6. Step-by-Step Example</h2>
+<ol>
+  <li>Velocity change: 25 km/s → 30 km/s</li>
+  <li>Inclination change: 10° → 15°</li>
+  <li>Semi-major axis: 1.2 AU → 1.05 AU</li>
+  <li>Calculate miss distance: <code>miss_distance = |1 - 1.05| × 149,597,870 / (30 / 10) ≈ 49,866 km</code></li>
+  <li>Estimate collision probability: <code>P = exp(-49866 / (6371×10)) ×100 ≈ 45%</code></li>
+  <li>Impact location (example): Latitude ≈ 22°, Longitude ≈ 78°, Range ≈ 300 km</li>
+</ol>
+
+<h2>7. Deflection Study (Optional)</h2>
+<p>Even a small velocity change (Δv ≈ 1-5 m/s) applied years in advance can significantly change impact probability and zone.</p>
+
+<h2>8. Scientific Q&A</h2>
+<div class="qa">
+  <strong>Q:</strong> How do we know if an asteroid will hit Earth?<br>
+  <strong>A:</strong> We calculate the relative distance to Earth; if it’s less than Earth's radius + atmosphere, impact is possible.
+</div>
+<div class="qa">
+  <strong>Q:</strong> Where does orbital data come from?<br>
+  <strong>A:</strong> From NASA NeoWs API which provides orbital elements and physical properties.
+</div>
+<div class="qa">
+  <strong>Q:</strong> Why use Monte Carlo simulation?<br>
+  <strong>A:</strong> Asteroid positions are uncertain due to measurement errors; Monte Carlo gives probability distribution of impact.
+</div>
+<div class="qa">
+  <strong>Q:</strong> How do we get latitude/longitude of impact?<br>
+  <strong>A:</strong> Convert 3D asteroid vector in Earth-centered frame to geodetic coordinates using pyproj or similar tools.
+</div>
+<div class="qa">
+  <strong>Q:</strong> Why is deflection important?<br>
+  <strong>A:</strong> Small Δv can shift orbit enough to avoid Earth impact.
+</div>
+
+<h2>9. Summary</h2>
+<p>By adjusting orbital parameters (velocity, inclination, semi-major axis), we can recalculate asteroid trajectory, estimate miss distance, and predict collision zones and probabilities on Earth. Monte Carlo simulation helps incorporate uncertainties, while small deflections can prevent potential impacts.</p>
+<h2>10. Latitude & Longitude Range Measurement</h2>
+<p>To estimate the possible impact zone on Earth:</p>
+<ol>
+  <li>Propagate asteroid orbit in 3D space to future times using orbital elements (a, e, i, Ω, ω, M).</li>
+  <li>Convert asteroid positions to Earth-centered coordinates: <code>r_rel = r_asteroid - r_earth</code>.</li>
+  <li>Calculate minimum distance (miss distance). If distance < Earth's radius, impact possible.</li>
+  <li>Compute velocity vector relative to Earth: <code>v_rel = v_asteroid - v_earth</code>.</li>
+  <li>Take Earth's rotation into account to determine latitude and longitude of impact.</li>
+  <li>Run Monte Carlo simulation (multiple samples with small orbital variations) to estimate:</li>
+  <ul>
+    <li>Min & Max Latitude → <code>Lat Range</code></li>
+    <li>Min & Max Longitude → <code>Lon Range</code></li>
+    <li>Probability density of impact across the zone</li>
+  </ul>
+  <li>Include atmospheric and fragmentation effects to expand impact zone if needed.</li>
+  <li>Plot the resulting polygon on a map for visual representation.</li>
+</ol>
+<p>Example Output: Latitude 20°N–25°N, Longitude 75°E–80°E, Max probability at 22.5°N, 77.5°E.</p>
+
+
+</body>
+</html>

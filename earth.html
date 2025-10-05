@@ -650,84 +650,326 @@
         const EARTH_RADIUS_UNITS = 30;
         const MU_SUN = 1.32712440018e11;
         const BACKEND_URL = 'http://127.0.0.1:5000';
+        const EARTH_AXIAL_TILT = 23.5 * Math.PI / 180; // Earth's axial tilt in radians
 
-        // Scene setup
+        // Scene setup with enhanced rendering
         const scene = new THREE.Scene();
+        scene.fog = new THREE.Fog(0x000000, 1000, 5000);
+        
         const rightPanel = document.getElementById('right-panel');
         const camera = new THREE.PerspectiveCamera(60, rightPanel.offsetWidth / rightPanel.offsetHeight, 0.1, 10000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true, 
+            preserveDrawingBuffer: true,
+            powerPreference: "high-performance"
+        });
         
         renderer.setSize(rightPanel.offsetWidth, rightPanel.offsetHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
         rightPanel.appendChild(renderer.domElement);
 
-        // Starfield
-        const starGeometry = new THREE.BufferGeometry();
-        const starVertices = [];
-        for (let i = 0; i < 10000; i++) {
-            starVertices.push(
-                (Math.random() - 0.5) * 6000,
-                (Math.random() - 0.5) * 6000,
-                (Math.random() - 0.5) * 6000
+        // Enhanced Starfield with multiple layers
+        const starfieldGroup = new THREE.Group();
+        
+        // Bright stars layer
+        const brightStarGeometry = new THREE.BufferGeometry();
+        const brightStarVertices = [];
+        for (let i = 0; i < 3000; i++) {
+            brightStarVertices.push(
+                (Math.random() - 0.5) * 8000,
+                (Math.random() - 0.5) * 8000,
+                (Math.random() - 0.5) * 8000
             );
         }
-        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-        const stars = new THREE.Points(
-            starGeometry,
-            new THREE.PointsMaterial({ color: 0xffffff, size: 2 })
+        brightStarGeometry.setAttribute('position', new THREE.Float32BufferAttribute(brightStarVertices, 3));
+        const brightStars = new THREE.Points(
+            brightStarGeometry,
+            new THREE.PointsMaterial({ 
+                color: 0xffffff, 
+                size: 4,
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: 1
+            })
         );
-        scene.add(stars);
+        starfieldGroup.add(brightStars);
+        
+        // Dim stars layer
+        const dimStarGeometry = new THREE.BufferGeometry();
+        const dimStarVertices = [];
+        for (let i = 0; i < 10000; i++) {
+            dimStarVertices.push(
+                (Math.random() - 0.5) * 10000,
+                (Math.random() - 0.5) * 10000,
+                (Math.random() - 0.5) * 10000
+            );
+        }
+        dimStarGeometry.setAttribute('position', new THREE.Float32BufferAttribute(dimStarVertices, 3));
+        const dimStars = new THREE.Points(
+            dimStarGeometry,
+            new THREE.PointsMaterial({ 
+                color: 0xaaaaaa, 
+                size: 1.5,
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: 0.7
+            })
+        );
+        starfieldGroup.add(dimStars);
+        
+        scene.add(starfieldGroup);
 
-        // Lighting
-        scene.add(new THREE.AmbientLight(0x404040, 0.6));
-        const sunLight = new THREE.PointLight(0xffffff, 2.5, 0);
+        // Enhanced Lighting
+        scene.add(new THREE.AmbientLight(0x404040, 0.3));
+        
+        // Main sun light with shadows
+        const sunLight = new THREE.PointLight(0xffffff, 3, 0);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 5000;
         scene.add(sunLight);
 
-        // Sun
-        const sun = new THREE.Mesh(
-            new THREE.SphereGeometry(12, 32, 32),
-            new THREE.MeshBasicMaterial({ color: 0xfdb813 })
-        );
-        scene.add(sun);
+        // Add rim light for better 3D effect
+        const rimLight = new THREE.DirectionalLight(0x4488ff, 0.5);
+        rimLight.position.set(-100, 100, -100);
+        scene.add(rimLight);
 
-        // Earth
-        const earthGeometry = new THREE.SphereGeometry(EARTH_RADIUS_UNITS, 64, 64);
-        const earthMaterial = new THREE.MeshPhongMaterial({
-            color: 0x2244ff,
-            emissive: 0x001133,
-            shininess: 30
+        // Enhanced Sun with glow effect
+        const sunGroup = new THREE.Group();
+        
+        // Sun core
+        const sunGeometry = new THREE.SphereGeometry(15, 64, 64);
+        const sunMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xffd700,
+            emissive: 0xffd700,
+            emissiveIntensity: 2
         });
-        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-        scene.add(earth);
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        sunGroup.add(sun);
+        
+        // Sun glow
+        const sunGlowGeometry = new THREE.SphereGeometry(25, 32, 32);
+        const sunGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffaa00,
+            transparent: true,
+            opacity: 0.4,
+            side: THREE.BackSide
+        });
+        const sunGlow = new THREE.Mesh(sunGlowGeometry, sunGlowMaterial);
+        sunGroup.add(sunGlow);
+        
+        // Sun corona
+        const coronaGeometry = new THREE.SphereGeometry(35, 32, 32);
+        const coronaMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff8800,
+            transparent: true,
+            opacity: 0.2,
+            side: THREE.BackSide
+        });
+        const sunCorona = new THREE.Mesh(coronaGeometry, coronaMaterial);
+        sunGroup.add(sunCorona);
+        
+        scene.add(sunGroup);
 
-        // Atmosphere
-        const atmosphere = new THREE.Mesh(
-            new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 3, 64, 64),
+        // Earth Container (for orbital positioning)
+        const earthContainer = new THREE.Object3D();
+        scene.add(earthContainer);
+
+        // Enhanced Earth with realistic appearance
+        const earthGroup = new THREE.Group();
+        
+        // Earth sphere with detailed material
+        const earthGeometry = new THREE.SphereGeometry(EARTH_RADIUS_UNITS, 128, 128);
+        
+        // Create Earth texture with procedural colors
+        const earthMaterial = new THREE.MeshPhongMaterial({
+            color: 0x2244aa,
+            emissive: 0x112244,
+            emissiveIntensity: 0.1,
+            shininess: 100,
+            specular: 0x333333,
+            flatShading: false
+        });
+        
+        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        earth.castShadow = true;
+        earth.receiveShadow = true;
+        earth.rotation.z = EARTH_AXIAL_TILT;
+        earthGroup.add(earth);
+        
+        // Add continental details (simple colored patches)
+        const continentGeometry = new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 0.1, 64, 64, 0, Math.PI * 0.5);
+        const continentMaterial = new THREE.MeshPhongMaterial({
+            color: 0x228844,
+            emissive: 0x112211,
+            transparent: true,
+            opacity: 0.6
+        });
+        const continent = new THREE.Mesh(continentGeometry, continentMaterial);
+        earth.add(continent);
+        
+        // Enhanced atmosphere with multiple layers
+        const atmosphereGroup = new THREE.Group();
+        
+        // Inner atmosphere
+        const innerAtmosphere = new THREE.Mesh(
+            new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 2, 64, 64),
             new THREE.MeshBasicMaterial({
-                color: 0x4499ff,
+                color: 0x88aaff,
                 transparent: true,
-                opacity: 0.2,
+                opacity: 0.3,
                 side: THREE.BackSide
             })
         );
-        earth.add(atmosphere);
+        atmosphereGroup.add(innerAtmosphere);
+        
+        // Outer atmosphere
+        const outerAtmosphere = new THREE.Mesh(
+            new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 4, 64, 64),
+            new THREE.MeshBasicMaterial({
+                color: 0x4488ff,
+                transparent: true,
+                opacity: 0.15,
+                side: THREE.BackSide
+            })
+        );
+        atmosphereGroup.add(outerAtmosphere);
+        
+        earth.add(atmosphereGroup);
+        
+        // Cloud layer
+        const cloudGeometry = new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 1, 64, 64);
+        const cloudMaterial = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.3,
+            emissive: 0xffffff,
+            emissiveIntensity: 0.1
+        });
+        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        earth.add(clouds);
+        
+        // Visual axis indicator
+        const axisGeometry = new THREE.CylinderGeometry(0.5, 0.5, EARTH_RADIUS_UNITS * 3, 8);
+        const axisMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xffffff, 
+            transparent: true, 
+            opacity: 0.2 
+        });
+        const earthAxis = new THREE.Mesh(axisGeometry, axisMaterial);
+        earth.add(earthAxis);
+        
+        earthContainer.add(earthGroup);
 
-        // Earth orbit
+        // Enhanced Earth orbit with gradient effect
         const earthOrbitRadius = 300;
         const earthEccentricity = 0.0167;
-        let earthOrbitLine = createOrbitLine(earthOrbitRadius, earthEccentricity, 0, 0, 0, 0x4488ff);
+        
+        // Create bold orbit line for Earth
+        function createBoldOrbitLine(a, e, i, omega, w, color, segments = 1200) {
+            const orbitGroup = new THREE.Group();
+            
+            // Main orbit line
+            const points = [];
+            for (let j = 0; j <= segments; j++) {
+                const M = (j / segments) * 2 * Math.PI;
+                const pos = orbitalToCartesian(a, e, i, omega, w, M * 180 / Math.PI);
+                points.push(new THREE.Vector3(pos.x, pos.y, pos.z));
+            }
+            
+            // Create thick line using TubeGeometry
+            const curve = new THREE.CatmullRomCurve3(points, true);
+            const tubeGeometry = new THREE.TubeGeometry(curve, segments, 1.5, 8, true);
+            const tubeMaterial = new THREE.MeshBasicMaterial({ 
+                color: color,
+                transparent: true,
+                opacity: 0.9
+            });
+            const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
+            orbitGroup.add(tube);
+            
+            // Add glow effect
+            const glowGeometry = new THREE.TubeGeometry(curve, segments, 3, 8, true);
+            const glowMaterial = new THREE.MeshBasicMaterial({ 
+                color: color,
+                transparent: true,
+                opacity: 0.3
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            orbitGroup.add(glow);
+            
+            return orbitGroup;
+        }
+        
+        let earthOrbitLine = createBoldOrbitLine(earthOrbitRadius, earthEccentricity, 0, 0, 0, 0x4488ff);
         scene.add(earthOrbitLine);
 
-        // Asteroid
-        let asteroid = new THREE.Mesh(
-            new THREE.SphereGeometry(6, 16, 16),
-            new THREE.MeshPhongMaterial({ color: 0xff4422 })
-        );
-        scene.add(asteroid);
+        // Enhanced Asteroid with rocky appearance
+        const asteroidGroup = new THREE.Group();
+        
+        // Create irregular asteroid shape
+        const asteroidGeometry = new THREE.DodecahedronGeometry(8, 1);
+        
+        // Deform vertices for irregular shape
+        const positionAttribute = asteroidGeometry.getAttribute('position');
+        for (let i = 0; i < positionAttribute.count; i++) {
+            const x = positionAttribute.getX(i);
+            const y = positionAttribute.getY(i);
+            const z = positionAttribute.getZ(i);
+            const noise = 0.8 + Math.random() * 0.4;
+            positionAttribute.setXYZ(i, x * noise, y * noise, z * noise);
+        }
+        asteroidGeometry.computeVertexNormals();
+        
+        const asteroidMaterial = new THREE.MeshPhongMaterial({ 
+            color: 0x8b7355,
+            emissive: 0x2a1a0a,
+            emissiveIntensity: 0.1,
+            shininess: 5,
+            flatShading: true
+        });
+        
+        const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
+        asteroid.castShadow = true;
+        asteroid.receiveShadow = true;
+        asteroidGroup.add(asteroid);
+        
+        // Add asteroid glow for visibility
+        const asteroidGlowGeometry = new THREE.SphereGeometry(10, 16, 16);
+        const asteroidGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff6633,
+            transparent: true,
+            opacity: 0.3
+        });
+        const asteroidGlow = new THREE.Mesh(asteroidGlowGeometry, asteroidGlowMaterial);
+        asteroidGroup.add(asteroidGlow);
+        
+        // Add trail effect for asteroid
+        const trailGeometry = new THREE.SphereGeometry(3, 8, 8);
+        const trailMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff4422,
+            transparent: true,
+            opacity: 0.5
+        });
+        const asteroidTrail = new THREE.Mesh(trailGeometry, trailMaterial);
+        asteroidGroup.add(asteroidTrail);
+        
+        scene.add(asteroidGroup);
 
         // Asteroid orbit line
         let asteroidOrbitLine = null;
         let impactMarker = null;
+
+        // Trail for asteroid
+        const asteroidTrailPoints = [];
+        const MAX_TRAIL_POINTS = 50;
+        let trailLine = null;
 
         // Asteroid data - initialize as null to prevent animation until data is loaded
         let asteroidData = null;
@@ -783,25 +1025,34 @@
             };
         }
 
-        function createOrbitLine(a, e, i, omega, w, color, segments = 1200) {
-            const points = [];
-            for (let j = 0; j <= segments; j++) {
-                const M = (j / segments) * 2 * Math.PI;
-                const pos = orbitalToCartesian(a, e, i, omega, w, M * 180 / Math.PI);
-                points.push(pos.x, pos.y, pos.z);
-            }
-            const geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
-            return new THREE.Line(
-                geometry,
-                new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.8 })
-            );
-        }
-
         function calculateOrbitalVelocity(r, a) {
             const rKm = r * AU_TO_KM;
             const aKm = a * AU_TO_KM;
             return Math.sqrt(MU_SUN * (2 / rKm - 1 / aKm));
+        }
+
+        // Update asteroid trail
+        function updateAsteroidTrail(position) {
+            asteroidTrailPoints.push(position.clone());
+            if (asteroidTrailPoints.length > MAX_TRAIL_POINTS) {
+                asteroidTrailPoints.shift();
+            }
+            
+            if (trailLine) {
+                scene.remove(trailLine);
+            }
+            
+            if (asteroidTrailPoints.length > 1) {
+                const trailGeometry = new THREE.BufferGeometry().setFromPoints(asteroidTrailPoints);
+                const trailMaterial = new THREE.LineBasicMaterial({
+                    color: 0xff6633,
+                    transparent: true,
+                    opacity: 0.5,
+                    linewidth: 2
+                });
+                trailLine = new THREE.Line(trailGeometry, trailMaterial);
+                scene.add(trailLine);
+            }
         }
 
         // Fetch asteroid data from backend
@@ -894,7 +1145,7 @@
             if (asteroidOrbitLine) scene.remove(asteroidOrbitLine);
             
             const scaledA = asteroidData.a * AU_TO_UNITS;
-            asteroidOrbitLine = createOrbitLine(
+            asteroidOrbitLine = createBoldOrbitLine(
                 scaledA, asteroidData.e, asteroidData.i,
                 asteroidData.omega, asteroidData.w, 0xff6622
             );
@@ -906,6 +1157,13 @@
             
             collisionDetected = false;
             collisionTime = -1;
+            
+            // Clear trail
+            asteroidTrailPoints.length = 0;
+            if (trailLine) {
+                scene.remove(trailLine);
+                trailLine = null;
+            }
         }
 
         // Collision detection with parameter sensitivity
@@ -946,14 +1204,13 @@
                     const astPos = orbitalToCartesian(scaledA, testData.e, testData.i,
                         testData.omega, testData.w, M);
                     
-                    const earthAngle = (t / 365.25) * 2 * Math.PI;
-                    const earthX = earthOrbitRadius * Math.cos(earthAngle);
-                    const earthZ = earthOrbitRadius * Math.sin(earthAngle);
+                    const earthM = (t / 365.25) * 360;
+                    const earthPos = orbitalToCartesian(earthOrbitRadius, earthEccentricity, 0, 0, 0, earthM);
                     
                     const dist = Math.sqrt(
-                        Math.pow(astPos.x - earthX, 2) +
-                        Math.pow(astPos.y, 2) +
-                        Math.pow(astPos.z - earthZ, 2)
+                        Math.pow(astPos.x - earthPos.x, 2) +
+                        Math.pow(astPos.y - earthPos.y, 2) +
+                        Math.pow(astPos.z - earthPos.z, 2)
                     );
                     
                     const distKm = (dist / AU_TO_UNITS) * AU_TO_KM;
@@ -970,14 +1227,13 @@
                 const astPos = orbitalToCartesian(scaledA, asteroidData.e, asteroidData.i,
                     asteroidData.omega, asteroidData.w, M);
                 
-                const earthAngle = (t / 365.25) * 2 * Math.PI;
-                const earthX = earthOrbitRadius * Math.cos(earthAngle);
-                const earthZ = earthOrbitRadius * Math.sin(earthAngle);
+                const earthM = (t / 365.25) * 360;
+                const earthPos = orbitalToCartesian(earthOrbitRadius, earthEccentricity, 0, 0, 0, earthM);
                 
                 const dist = Math.sqrt(
-                    Math.pow(astPos.x - earthX, 2) +
-                    Math.pow(astPos.y, 2) +
-                    Math.pow(astPos.z - earthZ, 2)
+                    Math.pow(astPos.x - earthPos.x, 2) +
+                    Math.pow(astPos.y - earthPos.y, 2) +
+                    Math.pow(astPos.z - earthPos.z, 2)
                 );
                 
                 minDistance = Math.min(minDistance, dist);
@@ -1009,14 +1265,13 @@
                     const astPos = orbitalToCartesian(scaledAPert, perturbedData.e, perturbedData.i,
                         perturbedData.omega, perturbedData.w, M);
                     
-                    const earthAngle = (t / 365.25) * 2 * Math.PI;
-                    const earthX = earthOrbitRadius * Math.cos(earthAngle);
-                    const earthZ = earthOrbitRadius * Math.sin(earthAngle);
+                    const earthM = (t / 365.25) * 360;
+                    const earthPos = orbitalToCartesian(earthOrbitRadius, earthEccentricity, 0, 0, 0, earthM);
                     
                     const dist = Math.sqrt(
-                        Math.pow(astPos.x - earthX, 2) +
-                        Math.pow(astPos.y, 2) +
-                        Math.pow(astPos.z - earthZ, 2)
+                        Math.pow(astPos.x - earthPos.x, 2) +
+                        Math.pow(astPos.y - earthPos.y, 2) +
+                        Math.pow(astPos.z - earthPos.z, 2)
                     );
                     
                     const distKm = (dist / AU_TO_UNITS) * AU_TO_KM;
@@ -1024,9 +1279,9 @@
                         sampleCollides = true;
                         collisions++;
                         
-                        const impactX = astPos.x - earthX;
-                        const impactY = astPos.y;
-                        const impactZ = astPos.z - earthZ;
+                        const impactX = astPos.x - earthPos.x;
+                        const impactY = astPos.y - earthPos.y;
+                        const impactZ = astPos.z - earthPos.z;
                         const impactR = Math.sqrt(impactX*impactX + impactY*impactY + impactZ*impactZ);
                         
                         const lat = Math.asin(impactY / impactR) * 180 / Math.PI;
@@ -1256,6 +1511,12 @@
             time = 0;
             collisionDetected = false;
             document.getElementById('collision-impact').style.display = 'none';
+            // Clear trail
+            asteroidTrailPoints.length = 0;
+            if (trailLine) {
+                scene.remove(trailLine);
+                trailLine = null;
+            }
         });
 
         document.getElementById('btn-continue').addEventListener('click', () => {
@@ -1324,19 +1585,34 @@
 
             // Only animate if data is loaded
             if (!isDataLoaded || !asteroidData) {
+                // Rotate sun and starfield even when paused
+                sunGroup.rotation.y += 0.001;
+                starfieldGroup.rotation.y += 0.0001;
                 renderer.render(scene, camera);
                 return;
             }
 
             if (!isPaused) {
-                // Update Earth position
-                const earthAngle = (time / 365.25) * 2 * Math.PI;
-                const earthE = solveKeplerEquation(earthAngle, earthEccentricity);
-                const earthR = earthOrbitRadius * (1 - earthEccentricity * Math.cos(earthE));
-                const earthNu = calculateTrueAnomaly(earthE, earthEccentricity);
-                earth.position.x = earthR * Math.cos(earthNu);
-                earth.position.z = earthR * Math.sin(earthNu);
+                // Update Earth position using the same orbital calculation as the orbit line
+                const earthM = (time / 365.25) * 360; // Mean anomaly in degrees
+                const earthPos = orbitalToCartesian(
+                    earthOrbitRadius,  // semi-major axis
+                    earthEccentricity, // eccentricity
+                    0,                 // inclination (Earth's reference plane)
+                    0,                 // RAAN
+                    0,                 // argument of periapsis
+                    earthM             // mean anomaly
+                );
+                
+                // Move the container (orbital position)
+                earthContainer.position.x = earthPos.x;
+                earthContainer.position.y = earthPos.y;
+                earthContainer.position.z = earthPos.z;
+                
+                // Rotate Earth on its tilted axis (daily rotation)
                 earth.rotation.y += 0.01;
+                clouds.rotation.y += 0.012;
+                clouds.rotation.z += 0.001;
 
                 // Update asteroid
                 const period = Math.pow(asteroidData.a, 1.5) * 365.25;
@@ -1345,14 +1621,18 @@
                 const astPos = orbitalToCartesian(scaledA, asteroidData.e, asteroidData.i,
                     asteroidData.omega, asteroidData.w, M);
                 
-                asteroid.position.set(astPos.x, astPos.y, astPos.z);
-                asteroid.rotation.y += 0.02;
+                asteroidGroup.position.set(astPos.x, astPos.y, astPos.z);
+                asteroid.rotation.x += 0.02;
+                asteroid.rotation.y += 0.03;
+                
+                // Update asteroid trail
+                updateAsteroidTrail(asteroidGroup.position);
 
-                // Check for collision
+                // Check for collision (use earthContainer position)
                 const distToEarth = Math.sqrt(
-                    Math.pow(astPos.x - earth.position.x, 2) +
-                    Math.pow(astPos.y - earth.position.y, 2) +
-                    Math.pow(astPos.z - earth.position.z, 2)
+                    Math.pow(astPos.x - earthContainer.position.x, 2) +
+                    Math.pow(astPos.y - earthContainer.position.y, 2) +
+                    Math.pow(astPos.z - earthContainer.position.z, 2)
                 );
                 
                 const distToEarthKm = (distToEarth / AU_TO_UNITS) * AU_TO_KM;
@@ -1371,9 +1651,15 @@
                 document.getElementById('hud-distance').textContent = ((distToEarth / AU_TO_UNITS) * AU_TO_KM / 1e6).toFixed(2) + ' million km';
                 document.getElementById('hud-radius').textContent = (astPos.r / AU_TO_UNITS).toFixed(3) + ' AU';
 
-                sun.rotation.y += 0.005;
+                sunGroup.rotation.y += 0.005;
+                sunGlow.material.opacity = 0.4 + Math.sin(time * 0.1) * 0.1;
+                sunCorona.material.opacity = 0.2 + Math.sin(time * 0.08) * 0.05;
+                
                 time += timeSpeed;
             }
+            
+            // Rotate starfield slowly
+            starfieldGroup.rotation.y += 0.0001;
 
             renderer.render(scene, camera);
         }

@@ -642,6 +642,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- <script src="index.js"></script> -->
     <script>
         // Constants
         const AU_TO_KM = 149597870.7;
@@ -650,6 +651,7 @@
         const EARTH_RADIUS_UNITS = 30;
         const MU_SUN = 1.32712440018e11;
         const BACKEND_URL = 'http://127.0.0.1:5000';
+        const EARTH_AXIAL_TILT = 23.5 * Math.PI / 180; // Earth's axial tilt in radians
 
         // Scene setup
         const scene = new THREE.Scene();
@@ -690,7 +692,11 @@
         );
         scene.add(sun);
 
-        // Earth
+        // Earth Container (for orbital positioning)
+        const earthContainer = new THREE.Object3D();
+        scene.add(earthContainer);
+
+        // Earth (with proper axial tilt)
         const earthGeometry = new THREE.SphereGeometry(EARTH_RADIUS_UNITS, 64, 64);
         const earthMaterial = new THREE.MeshPhongMaterial({
             color: 0x2244ff,
@@ -698,7 +704,12 @@
             shininess: 30
         });
         const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-        scene.add(earth);
+        
+        // Set Earth's axial tilt (23.5 degrees)
+        earth.rotation.z = EARTH_AXIAL_TILT;
+        
+        // Add Earth to container
+        earthContainer.add(earth);
 
         // Atmosphere
         const atmosphere = new THREE.Mesh(
@@ -711,6 +722,16 @@
             })
         );
         earth.add(atmosphere);
+
+        // Add visual indicator for Earth's axis (optional - helps visualize the tilt)
+        const axisGeometry = new THREE.CylinderGeometry(0.5, 0.5, EARTH_RADIUS_UNITS * 2.5, 8);
+        const axisMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xffffff, 
+            transparent: true, 
+            opacity: 0.3 
+        });
+        const earthAxis = new THREE.Mesh(axisGeometry, axisMaterial);
+        earth.add(earthAxis);
 
         // Earth orbit
         const earthOrbitRadius = 300;
@@ -1329,13 +1350,17 @@
             }
 
             if (!isPaused) {
-                // Update Earth position
+                // Update Earth position (using container for orbital movement)
                 const earthAngle = (time / 365.25) * 2 * Math.PI;
                 const earthE = solveKeplerEquation(earthAngle, earthEccentricity);
                 const earthR = earthOrbitRadius * (1 - earthEccentricity * Math.cos(earthE));
                 const earthNu = calculateTrueAnomaly(earthE, earthEccentricity);
-                earth.position.x = earthR * Math.cos(earthNu);
-                earth.position.z = earthR * Math.sin(earthNu);
+                
+                // Move the container (orbital position)
+                earthContainer.position.x = earthR * Math.cos(earthNu);
+                earthContainer.position.z = earthR * Math.sin(earthNu);
+                
+                // Rotate Earth on its tilted axis (daily rotation)
                 earth.rotation.y += 0.01;
 
                 // Update asteroid
@@ -1348,11 +1373,11 @@
                 asteroid.position.set(astPos.x, astPos.y, astPos.z);
                 asteroid.rotation.y += 0.02;
 
-                // Check for collision
+                // Check for collision (use earthContainer position)
                 const distToEarth = Math.sqrt(
-                    Math.pow(astPos.x - earth.position.x, 2) +
-                    Math.pow(astPos.y - earth.position.y, 2) +
-                    Math.pow(astPos.z - earth.position.z, 2)
+                    Math.pow(astPos.x - earthContainer.position.x, 2) +
+                    Math.pow(astPos.y - earthContainer.position.y, 2) +
+                    Math.pow(astPos.z - earthContainer.position.z, 2)
                 );
                 
                 const distToEarthKm = (distToEarth / AU_TO_UNITS) * AU_TO_KM;
@@ -1389,5 +1414,6 @@
 
         animate();
     </script>
+      <script src="index.js"></script>
 </body>
 </html>

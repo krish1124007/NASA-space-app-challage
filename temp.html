@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Asteroid Trajectory Test UI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      color: #222;
+      text-align: center;
+      padding: 50px;
+    }
+    input {
+      width: 120px;
+      padding: 5px;
+      margin: 10px;
+      border-radius: 5px;
+      border: 1px solid #999;
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 20px;
+      border-radius: 8px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      display: inline-block;
+      border: 1px solid #ccc;
+      min-width: 300px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Asteroid Trajectory & Miss Distance Test</h1>
+
+  <label>Velocity (km/s):</label>
+  <input type="number" id="velocity" value="25.0" step="0.1"><br>
+
+  <label>Inclination (°):</label>
+  <input type="number" id="inclination" value="10.0" step="0.1"><br>
+
+  <label>Semi-Major Axis (AU):</label>
+  <input type="number" id="semiMajorAxis" value="1.2" step="0.001"><br>
+
+  <button id="calculate">Calculate Trajectory</button>
+
+  <div id="result">
+    <p><b>Miss Distance:</b> -</p>
+    <p><b>Orbit Change:</b> -</p>
+  </div>
+
+  <script>
+    const AU_TO_KM = 149597870.7;
+
+    document.getElementById("calculate").addEventListener("click", () => {
+      const v = parseFloat(document.getElementById("velocity").value);
+      const i = parseFloat(document.getElementById("inclination").value);
+      const a = parseFloat(document.getElementById("semiMajorAxis").value);
+
+      // Simplified formula from Python code
+      const miss_distance = Math.abs((1.5 - a) * 1000000) / (v / 10); // same as backend example
+      const orbit_change = (i / 90 * 100).toFixed(2); // % orbit change
+
+      document.getElementById("result").innerHTML = `
+        <p><b>Miss Distance:</b> ${miss_distance.toFixed(2)} km</p>
+        <p><b>Orbit Change:</b> ${orbit_change} %</p>
+      `;
+    });
+  </script>
+
+</body>
+</html>
