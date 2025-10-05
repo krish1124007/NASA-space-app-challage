@@ -7,7 +7,9 @@ from services.orbit import kepler_to_cartesian
 from flask_cors import CORS
 import numpy as np
 import requests
-from services.impact_service import simulate_impact_neo
+import folium
+import io
+# from services.impact_service import simulate_impact_neo
 
 
 app = Flask(__name__)
@@ -51,35 +53,93 @@ def tsunami():
     data = get_tsunami_alerts()
     return jsonify(data)
 
-@app.route("/api/simulate_impact", methods=["POST"])
-def simulate_impact_endpoint():
-    """
-    Expects JSON:
-    {
-        "neo_id": "3542519",
-        "n_samples": 500,
-        "window_days": 365,
-        "apply_dv_magnitude_ms": 5
+
+
+def asteroid_impact(diameter_m, velocity_kms, density=3000, burst_altitude_m=0):
+    radius = diameter_m / 2
+    mass = density * (4 / 3) * math.pi * radius ** 3
+    velocity_ms = velocity_kms * 1000
+    kinetic_energy_j = 0.5 * mass * velocity_ms ** 2
+    tnt_kg = kinetic_energy_j / 4.184e6
+    tnt_kt = tnt_kg / 1e3
+    thermal_fraction = 0.35
+    thermal_energy_j = kinetic_energy_j * thermal_fraction
+    thermal_energy_tnt_kt = thermal_energy_j / 4.184e9
+
+    overpressure_Z = {
+        "0.15_psi_Loud_Boom": 55,
+        "1_psi_Window_Break": 40,
+        "3_psi_Moderate_Damage": 20,
+        "5_psi_Heavy_Damage": 15,
+        "10_psi_Severe_Structural": 10
     }
-    """
-    payload = request.json
-    neo_id = payload.get("neo_id")
-    n_samples = payload.get("n_samples", 500)
-    window_days = payload.get("window_days", 365)
-    dv_ms = payload.get("apply_dv_magnitude_ms", 0.0)
 
-    if not neo_id:
-        return jsonify({"error": "neo_id is required"}), 400
+    shockwave_radii_km = {}
+    for key, Z in overpressure_Z.items():
+        R = Z * (tnt_kg ** (1 / 3))
+        if burst_altitude_m > 0:
+            R *= 1 / (1 + burst_altitude_m / 10000)
+        shockwave_radii_km[key] = R / 1000
 
-    results = simulate_impact_neo(
-        api_key=NASA_API_KEY,
-        neo_id=neo_id,
-        n_samples=n_samples,
-        window_days=window_days,
-        dv_ms=dv_ms
-    )
+    return {
+        "mass_kg": mass,
+        "kinetic_energy_j": kinetic_energy_j,
+        "tnt_equivalent_kt": tnt_kt,
+        "thermal_energy_j": thermal_energy_j,
+        "thermal_energy_tnt_kt": thermal_energy_tnt_kt,
+        "shockwave_radius_km": shockwave_radii_km
+    }
 
-    return jsonify(results)
+def impact_to_magnitude(kinetic_energy_j, seismic_fraction=0.01):
+    seismic_energy_j = kinetic_energy_j * seismic_fraction
+    magnitude = (2 / 3) * math.log10(seismic_energy_j) - 10.7
+    return magnitude
+
+def get_similar_earthquakes(magnitude):
+    url = f"https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude={magnitude}&maxmagnitude={magnitude+0.2}&limit=10"
+    response = requests.get(url)
+    data = response.json()
+    earthquakes = []
+    for feature in data.get('features', []):
+        mag = feature['properties']['mag']
+        place = feature['properties']['place']
+        coords = feature['geometry']['coordinates']
+        earthquakes.append({
+            'magnitude': mag,
+            'location': place,
+            'longitude': coords[0],
+            'latitude': coords[1]
+        })
+    return earthquakes
+
+def plot_impact(lat, lon, impact_result, earthquakes):
+    m = folium.Map(location=[lat, lon], zoom_start=4, tiles='cartodb dark_matter')
+    folium.CircleMarker(location=[lat, lon], radius=10, color='red', fill=True, fill_color='red', popup="🚀 Asteroid Impact Point").add_to(m)
+
+    thermal_radius_km = (impact_result['thermal_energy_tnt_kt'] ** (1 / 3)) * 5
+    folium.Circle(location=[lat, lon], radius=thermal_radius_km*1000, color='yellow', fill=True, fill_opacity=0.25, popup=f"🔥 Thermal Zone (~{thermal_radius_km:.2f} km)").add_to(m)
+
+    shockwave_colors = {"0.15_psi_Loud_Boom": "#ffe699","1_psi_Window_Break": "#ffcc66","3_psi_Moderate_Damage": "#ff9933",
+                        "5_psi_Heavy_Damage": "#ff6600","10_psi_Severe_Structural": "#ff3300"}
+
+    for key, radius_km in impact_result["shockwave_radius_km"].items():
+        folium.Circle(location=[lat, lon], radius=radius_km*1000, color=shockwave_colors[key], fill=False,
+                      popup=f"💥 {key.replace('_',' ')} - {radius_km:.1f} km").add_to(m)
+
+    eq_colors = ['#99ccff', '#6699ff', '#3366ff', '#0033cc']
+    for idx, eq in enumerate(earthquakes):
+        folium.CircleMarker(location=[eq['latitude'], eq['longitude']], radius=7, color=eq_colors[idx % len(eq_colors)],
+                            fill=True, fill_opacity=0.6, popup=f"🌍 Earthquake<br>Magnitude: {eq['magnitude']}<br>Region: {eq['location']}").add_to(m)
+
+    folium.LayerControl().add_to(m)
+
+    # Save map to in-memory HTML
+    map_html = m._repr_html_()
+    return map_html
+
+
+
+
 # ===== Simulation Engine =====
 @app.route("/api/simulate", methods=["POST"])
 def simulate():
@@ -260,7 +320,24 @@ def calculate_impact():
     return jsonify(result)
 
 
+@app.route('/generate_impact_map', methods=['POST'])
+def generate_impact_map():
+    data = request.get_json()
 
+    diameter = float(data.get('diameter'))
+    velocity = float(data.get('velocity'))
+    density = float(data.get('density', 3000))
+    burst_altitude = float(data.get('burst_altitude', 0))
+    lat = float(data.get('lat'))
+    lon = float(data.get('lon'))
+
+    impact_result = asteroid_impact(diameter, velocity, density, burst_altitude)
+    magnitude = impact_to_magnitude(impact_result["kinetic_energy_j"])
+    earthquakes = get_similar_earthquakes(magnitude)
+
+    map_html = plot_impact(lat, lon, impact_result, earthquakes)
+
+    return map_html  # send the HTML code as response
 
 
 if __name__ == "__main__":

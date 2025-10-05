@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0a0a0a;
@@ -17,11 +19,12 @@
             overflow: hidden;
             height: 100vh;
         }
+
         .container {
             display: flex;
             height: 100vh;
         }
-        
+
         /* Professional Navbar */
         #nav-toggle {
             position: fixed;
@@ -40,24 +43,27 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
+
         #nav-toggle:hover {
             background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
             transform: translateY(-2px);
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.7);
         }
+
         #nav-toggle::before {
             content: '';
             width: 24px;
             height: 18px;
-            background: 
+            background:
                 linear-gradient(#fff, #fff) 0 0,
                 linear-gradient(#fff, #fff) 0 50%,
                 linear-gradient(#fff, #fff) 0 100%;
             background-size: 100% 2px;
             background-repeat: no-repeat;
         }
+
         #nav-toggle.active::before {
-            background: 
+            background:
                 linear-gradient(45deg, transparent 40%, #fff 40%, #fff 60%, transparent 60%),
                 linear-gradient(-45deg, transparent 40%, #fff 40%, #fff 60%, transparent 60%);
             background-size: 100% 100%;
@@ -76,15 +82,19 @@
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
         }
+
         #left-panel.hidden {
             transform: translateX(-420px);
         }
+
         #left-panel::-webkit-scrollbar {
             width: 8px;
         }
+
         #left-panel::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.2);
         }
+
         #left-panel::-webkit-scrollbar-thumb {
             background: rgba(100, 150, 255, 0.4);
             border-radius: 4px;
@@ -97,6 +107,7 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
+
         .feature-icon {
             width: 50px;
             height: 50px;
@@ -110,11 +121,13 @@
             transition: all 0.3s ease;
             font-size: 24px;
         }
+
         .feature-icon:hover {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
         }
+
         .feature-icon.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-color: #667eea;
@@ -130,13 +143,16 @@
             transition: all 0.3s ease;
             display: none;
         }
+
         .section.active {
             display: block;
         }
+
         .section:hover {
             border-color: rgba(100, 150, 255, 0.4);
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
         }
+
         .section-title {
             font-size: 19px;
             font-weight: 700;
@@ -150,6 +166,7 @@
             gap: 10px;
             letter-spacing: 0.5px;
         }
+
         .info-row {
             display: flex;
             justify-content: space-between;
@@ -158,20 +175,25 @@
             padding: 8px 0;
             border-bottom: 1px solid rgba(100, 150, 255, 0.1);
         }
+
         .info-row:last-child {
             border-bottom: none;
         }
+
         .info-label {
             color: #90caf9;
             font-weight: 500;
         }
+
         .info-value {
             color: #fff;
             text-align: right;
         }
+
         .input-group {
             margin: 12px 0;
         }
+
         .input-group label {
             display: block;
             color: #90caf9;
@@ -179,12 +201,16 @@
             margin-bottom: 6px;
             font-weight: 500;
         }
+
         .input-row {
             display: flex;
             gap: 10px;
             align-items: center;
         }
-        input[type="number"], input[type="range"], input[type="text"] {
+
+        input[type="number"],
+        input[type="range"],
+        input[type="text"] {
             background: rgba(50, 60, 100, 0.6);
             border: 1px solid rgba(100, 150, 255, 0.35);
             color: #fff;
@@ -194,23 +220,29 @@
             outline: none;
             transition: all 0.3s ease;
         }
-        input[type="number"], input[type="text"] {
+
+        input[type="number"],
+        input[type="text"] {
             width: 110px;
         }
+
         input[type="text"] {
             width: 100%;
         }
+
         input[type="range"] {
             flex: 1;
             padding: 0;
             height: 6px;
             cursor: pointer;
         }
+
         input:focus {
             border-color: #64b5f6;
             background: rgba(60, 70, 110, 0.7);
             box-shadow: 0 0 15px rgba(100, 181, 246, 0.4);
         }
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -221,6 +253,7 @@
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(100, 181, 246, 0.5);
         }
+
         input[type="range"]::-moz-range-thumb {
             width: 18px;
             height: 18px;
@@ -230,6 +263,7 @@
             border: none;
             box-shadow: 0 2px 8px rgba(100, 181, 246, 0.5);
         }
+
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
@@ -246,6 +280,7 @@
             position: relative;
             overflow: hidden;
         }
+
         .btn::before {
             content: '';
             position: absolute;
@@ -253,38 +288,47 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: left 0.5s;
         }
+
         .btn:hover::before {
             left: 100%;
         }
+
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
         }
+
         .btn:active {
             transform: translateY(-1px);
         }
+
         .btn-success {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             box-shadow: 0 6px 20px rgba(56, 239, 125, 0.35);
         }
+
         .btn-success:hover {
             box-shadow: 0 10px 30px rgba(56, 239, 125, 0.6);
         }
+
         .btn-danger {
             background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
             box-shadow: 0 6px 20px rgba(238, 9, 121, 0.35);
         }
+
         .btn-danger:hover {
             box-shadow: 0 10px 30px rgba(238, 9, 121, 0.6);
         }
+
         .control-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
+
         .collision-warning {
             background: rgba(255, 50, 50, 0.2);
             border: 2px solid #ff5252;
@@ -292,6 +336,7 @@
             padding: 15px;
             margin: 15px 0;
         }
+
         .collision-safe {
             background: rgba(50, 255, 150, 0.2);
             border: 2px solid #69f0ae;
@@ -299,18 +344,21 @@
             padding: 15px;
             margin: 15px 0;
         }
+
         .impact-info {
             font-size: 13px;
             margin: 8px 0;
         }
+
         .hazard-yes {
             color: #ff5252;
             font-weight: bold;
         }
+
         .hazard-no {
             color: #69f0ae;
         }
-        
+
         /* Right Panel */
         #right-panel {
             position: fixed;
@@ -321,12 +369,15 @@
             background: #000;
             transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         #right-panel.expanded {
             left: 0;
         }
+
         canvas {
             display: block;
         }
+
         #hud {
             position: absolute;
             top: 20px;
@@ -339,6 +390,7 @@
             min-width: 280px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
+
         .hud-title {
             font-size: 18px;
             background: linear-gradient(135deg, #64b5f6 0%, #8e99f3 100%);
@@ -349,6 +401,7 @@
             font-weight: 700;
             letter-spacing: 0.5px;
         }
+
         .hud-item {
             display: flex;
             justify-content: space-between;
@@ -357,16 +410,20 @@
             padding: 6px 0;
             border-bottom: 1px solid rgba(100, 150, 255, 0.1);
         }
+
         .hud-item:last-child {
             border-bottom: none;
         }
+
         .hud-label {
             color: #90caf9;
         }
+
         .hud-value {
             color: #fff;
             font-weight: 500;
         }
+
         #loading {
             position: absolute;
             top: 50%;
@@ -379,6 +436,7 @@
             border: 2px solid rgba(100, 150, 255, 0.5);
             text-align: center;
         }
+
         .progress-bar {
             width: 100%;
             height: 8px;
@@ -387,21 +445,25 @@
             overflow: hidden;
             margin: 10px 0;
         }
+
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             transition: width 0.3s;
         }
+
         .timeline-controls {
             display: flex;
             gap: 10px;
             margin-top: 10px;
         }
+
         .timeline-controls button {
             flex: 1;
             padding: 8px;
             font-size: 18px;
         }
+
         #collision-impact {
             display: none;
             position: fixed;
@@ -416,20 +478,30 @@
             z-index: 2000;
             animation: pulse 1s infinite;
         }
+
         @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); }
-            50% { box-shadow: 0 0 60px rgba(255, 0, 0, 1); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            }
+
+            50% {
+                box-shadow: 0 0 60px rgba(255, 0, 0, 1);
+            }
         }
+
         #collision-impact h2 {
             font-size: 36px;
             margin-bottom: 20px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div id="nav-toggle"></div>
-        
+
         <div id="left-panel">
             <!-- Feature Navigation -->
             <div class="feature-nav">
@@ -450,7 +522,7 @@
                     <p type="text" id="asteroid-id"></p>
                 </div>
                 <button class="btn btn-success" id="btn-fetch">🔄 Fetch from NASA API</button>
-                
+
                 <div id="asteroid-info-display">
                     <div class="info-row">
                         <span class="info-label">Name:</span>
@@ -579,6 +651,8 @@
             <div class="section" id="section-collision">
                 <div class="section-title">💥 Collision Analysis</div>
                 <button class="btn btn-danger" id="btn-collision">🔬 Run Analysis</button>
+                <button class="btn btn-safe" id="where">where ?</button>
+                <button class="btn btn-danger" id="impact"> impact</button>
                 <div id="collision-result"></div>
                 <div class="input-group">
                     <label>Monte Carlo Samples</label>
@@ -592,9 +666,11 @@
             <!-- AI Agent -->
             <div class="section" id="section-ai">
                 <div class="section-title">🤖 AI Agent Analysis</div>
-                <p style="color: #90caf9; margin-bottom: 15px;">Get AI-powered insights about the asteroid's trajectory and collision risk.</p>
+                <p style="color: #90caf9; margin-bottom: 15px;">Get AI-powered insights about the asteroid's trajectory
+                    and collision risk.</p>
                 <button class="btn" id="btn-ai-analyze">🧠 Analyze with AI</button>
-                <div id="ai-result" style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; display: none;">
+                <div id="ai-result"
+                    style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; display: none;">
                     <div style="color: #90caf9; margin-bottom: 10px; font-weight: bold;">AI Analysis:</div>
                     <div id="ai-text" style="color: #fff; line-height: 1.6;"></div>
                 </div>
@@ -650,84 +726,326 @@
         const EARTH_RADIUS_UNITS = 30;
         const MU_SUN = 1.32712440018e11;
         const BACKEND_URL = 'http://127.0.0.1:5000';
+        const EARTH_AXIAL_TILT = 23.5 * Math.PI / 180; // Earth's axial tilt in radians
 
-        // Scene setup
+        // Scene setup with enhanced rendering
         const scene = new THREE.Scene();
+        scene.fog = new THREE.Fog(0x000000, 1000, 5000);
+
         const rightPanel = document.getElementById('right-panel');
         const camera = new THREE.PerspectiveCamera(60, rightPanel.offsetWidth / rightPanel.offsetHeight, 0.1, 10000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-        
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            preserveDrawingBuffer: true,
+            powerPreference: "high-performance"
+        });
+
         renderer.setSize(rightPanel.offsetWidth, rightPanel.offsetHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
         rightPanel.appendChild(renderer.domElement);
 
-        // Starfield
-        const starGeometry = new THREE.BufferGeometry();
-        const starVertices = [];
-        for (let i = 0; i < 10000; i++) {
-            starVertices.push(
-                (Math.random() - 0.5) * 6000,
-                (Math.random() - 0.5) * 6000,
-                (Math.random() - 0.5) * 6000
+        // Enhanced Starfield with multiple layers
+        const starfieldGroup = new THREE.Group();
+
+        // Bright stars layer
+        const brightStarGeometry = new THREE.BufferGeometry();
+        const brightStarVertices = [];
+        for (let i = 0; i < 3000; i++) {
+            brightStarVertices.push(
+                (Math.random() - 0.5) * 8000,
+                (Math.random() - 0.5) * 8000,
+                (Math.random() - 0.5) * 8000
             );
         }
-        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-        const stars = new THREE.Points(
-            starGeometry,
-            new THREE.PointsMaterial({ color: 0xffffff, size: 2 })
+        brightStarGeometry.setAttribute('position', new THREE.Float32BufferAttribute(brightStarVertices, 3));
+        const brightStars = new THREE.Points(
+            brightStarGeometry,
+            new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 4,
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: 1
+            })
         );
-        scene.add(stars);
+        starfieldGroup.add(brightStars);
 
-        // Lighting
-        scene.add(new THREE.AmbientLight(0x404040, 0.6));
-        const sunLight = new THREE.PointLight(0xffffff, 2.5, 0);
+        // Dim stars layer
+        const dimStarGeometry = new THREE.BufferGeometry();
+        const dimStarVertices = [];
+        for (let i = 0; i < 10000; i++) {
+            dimStarVertices.push(
+                (Math.random() - 0.5) * 10000,
+                (Math.random() - 0.5) * 10000,
+                (Math.random() - 0.5) * 10000
+            );
+        }
+        dimStarGeometry.setAttribute('position', new THREE.Float32BufferAttribute(dimStarVertices, 3));
+        const dimStars = new THREE.Points(
+            dimStarGeometry,
+            new THREE.PointsMaterial({
+                color: 0xaaaaaa,
+                size: 1.5,
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: 0.7
+            })
+        );
+        starfieldGroup.add(dimStars);
+
+        scene.add(starfieldGroup);
+
+        // Enhanced Lighting
+        scene.add(new THREE.AmbientLight(0x404040, 0.3));
+
+        // Main sun light with shadows
+        const sunLight = new THREE.PointLight(0xffffff, 3, 0);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 5000;
         scene.add(sunLight);
 
-        // Sun
-        const sun = new THREE.Mesh(
-            new THREE.SphereGeometry(12, 32, 32),
-            new THREE.MeshBasicMaterial({ color: 0xfdb813 })
-        );
-        scene.add(sun);
+        // Add rim light for better 3D effect
+        const rimLight = new THREE.DirectionalLight(0x4488ff, 0.5);
+        rimLight.position.set(-100, 100, -100);
+        scene.add(rimLight);
 
-        // Earth
-        const earthGeometry = new THREE.SphereGeometry(EARTH_RADIUS_UNITS, 64, 64);
-        const earthMaterial = new THREE.MeshPhongMaterial({
-            color: 0x2244ff,
-            emissive: 0x001133,
-            shininess: 30
+        // Enhanced Sun with glow effect
+        const sunGroup = new THREE.Group();
+
+        // Sun core
+        const sunGeometry = new THREE.SphereGeometry(15, 64, 64);
+        const sunMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffd700,
+            emissive: 0xffd700,
+            emissiveIntensity: 2
         });
-        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-        scene.add(earth);
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        sunGroup.add(sun);
 
-        // Atmosphere
-        const atmosphere = new THREE.Mesh(
-            new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 3, 64, 64),
+        // Sun glow
+        const sunGlowGeometry = new THREE.SphereGeometry(25, 32, 32);
+        const sunGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffaa00,
+            transparent: true,
+            opacity: 0.4,
+            side: THREE.BackSide
+        });
+        const sunGlow = new THREE.Mesh(sunGlowGeometry, sunGlowMaterial);
+        sunGroup.add(sunGlow);
+
+        // Sun corona
+        const coronaGeometry = new THREE.SphereGeometry(35, 32, 32);
+        const coronaMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff8800,
+            transparent: true,
+            opacity: 0.2,
+            side: THREE.BackSide
+        });
+        const sunCorona = new THREE.Mesh(coronaGeometry, coronaMaterial);
+        sunGroup.add(sunCorona);
+
+        scene.add(sunGroup);
+
+        // Earth Container (for orbital positioning)
+        const earthContainer = new THREE.Object3D();
+        scene.add(earthContainer);
+
+        // Enhanced Earth with realistic appearance
+        const earthGroup = new THREE.Group();
+
+        // Earth sphere with detailed material
+        const earthGeometry = new THREE.SphereGeometry(EARTH_RADIUS_UNITS, 128, 128);
+
+        // Create Earth texture with procedural colors
+        const earthMaterial = new THREE.MeshPhongMaterial({
+            color: 0x2244aa,
+            emissive: 0x112244,
+            emissiveIntensity: 0.1,
+            shininess: 100,
+            specular: 0x333333,
+            flatShading: false
+        });
+
+        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        earth.castShadow = true;
+        earth.receiveShadow = true;
+        earth.rotation.z = EARTH_AXIAL_TILT;
+        earthGroup.add(earth);
+
+        // Add continental details (simple colored patches)
+        const continentGeometry = new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 0.1, 64, 64, 0, Math.PI * 0.5);
+        const continentMaterial = new THREE.MeshPhongMaterial({
+            color: 0x228844,
+            emissive: 0x112211,
+            transparent: true,
+            opacity: 0.6
+        });
+        const continent = new THREE.Mesh(continentGeometry, continentMaterial);
+        earth.add(continent);
+
+        // Enhanced atmosphere with multiple layers
+        const atmosphereGroup = new THREE.Group();
+
+        // Inner atmosphere
+        const innerAtmosphere = new THREE.Mesh(
+            new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 2, 64, 64),
             new THREE.MeshBasicMaterial({
-                color: 0x4499ff,
+                color: 0x88aaff,
                 transparent: true,
-                opacity: 0.2,
+                opacity: 0.3,
                 side: THREE.BackSide
             })
         );
-        earth.add(atmosphere);
+        atmosphereGroup.add(innerAtmosphere);
 
-        // Earth orbit
+        // Outer atmosphere
+        const outerAtmosphere = new THREE.Mesh(
+            new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 4, 64, 64),
+            new THREE.MeshBasicMaterial({
+                color: 0x4488ff,
+                transparent: true,
+                opacity: 0.15,
+                side: THREE.BackSide
+            })
+        );
+        atmosphereGroup.add(outerAtmosphere);
+
+        earth.add(atmosphereGroup);
+
+        // Cloud layer
+        const cloudGeometry = new THREE.SphereGeometry(EARTH_RADIUS_UNITS + 1, 64, 64);
+        const cloudMaterial = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.3,
+            emissive: 0xffffff,
+            emissiveIntensity: 0.1
+        });
+        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        earth.add(clouds);
+
+        // Visual axis indicator
+        const axisGeometry = new THREE.CylinderGeometry(0.5, 0.5, EARTH_RADIUS_UNITS * 3, 8);
+        const axisMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.2
+        });
+        const earthAxis = new THREE.Mesh(axisGeometry, axisMaterial);
+        earth.add(earthAxis);
+
+        earthContainer.add(earthGroup);
+
+        // Enhanced Earth orbit with gradient effect
         const earthOrbitRadius = 300;
         const earthEccentricity = 0.0167;
-        let earthOrbitLine = createOrbitLine(earthOrbitRadius, earthEccentricity, 0, 0, 0, 0x4488ff);
+
+        // Create bold orbit line for Earth
+        function createBoldOrbitLine(a, e, i, omega, w, color, segments = 1200) {
+            const orbitGroup = new THREE.Group();
+
+            // Main orbit line
+            const points = [];
+            for (let j = 0; j <= segments; j++) {
+                const M = (j / segments) * 2 * Math.PI;
+                const pos = orbitalToCartesian(a, e, i, omega, w, M * 180 / Math.PI);
+                points.push(new THREE.Vector3(pos.x, pos.y, pos.z));
+            }
+
+            // Create thick line using TubeGeometry
+            const curve = new THREE.CatmullRomCurve3(points, true);
+            const tubeGeometry = new THREE.TubeGeometry(curve, segments, 1.5, 8, true);
+            const tubeMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.9
+            });
+            const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
+            orbitGroup.add(tube);
+
+            // Add glow effect
+            const glowGeometry = new THREE.TubeGeometry(curve, segments, 3, 8, true);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.3
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            orbitGroup.add(glow);
+
+            return orbitGroup;
+        }
+
+        let earthOrbitLine = createBoldOrbitLine(earthOrbitRadius, earthEccentricity, 0, 0, 0, 0x4488ff);
         scene.add(earthOrbitLine);
 
-        // Asteroid
-        let asteroid = new THREE.Mesh(
-            new THREE.SphereGeometry(6, 16, 16),
-            new THREE.MeshPhongMaterial({ color: 0xff4422 })
-        );
-        scene.add(asteroid);
+        // Enhanced Asteroid with rocky appearance
+        const asteroidGroup = new THREE.Group();
+
+        // Create irregular asteroid shape
+        const asteroidGeometry = new THREE.DodecahedronGeometry(8, 1);
+
+        // Deform vertices for irregular shape
+        const positionAttribute = asteroidGeometry.getAttribute('position');
+        for (let i = 0; i < positionAttribute.count; i++) {
+            const x = positionAttribute.getX(i);
+            const y = positionAttribute.getY(i);
+            const z = positionAttribute.getZ(i);
+            const noise = 0.8 + Math.random() * 0.4;
+            positionAttribute.setXYZ(i, x * noise, y * noise, z * noise);
+        }
+        asteroidGeometry.computeVertexNormals();
+
+        const asteroidMaterial = new THREE.MeshPhongMaterial({
+            color: 0x8b7355,
+            emissive: 0x2a1a0a,
+            emissiveIntensity: 0.1,
+            shininess: 5,
+            flatShading: true
+        });
+
+        const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
+        asteroid.castShadow = true;
+        asteroid.receiveShadow = true;
+        asteroidGroup.add(asteroid);
+
+        // Add asteroid glow for visibility
+        const asteroidGlowGeometry = new THREE.SphereGeometry(10, 16, 16);
+        const asteroidGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff6633,
+            transparent: true,
+            opacity: 0.3
+        });
+        const asteroidGlow = new THREE.Mesh(asteroidGlowGeometry, asteroidGlowMaterial);
+        asteroidGroup.add(asteroidGlow);
+
+        // Add trail effect for asteroid
+        const trailGeometry = new THREE.SphereGeometry(3, 8, 8);
+        const trailMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff4422,
+            transparent: true,
+            opacity: 0.5
+        });
+        const asteroidTrail = new THREE.Mesh(trailGeometry, trailMaterial);
+        asteroidGroup.add(asteroidTrail);
+
+        scene.add(asteroidGroup);
 
         // Asteroid orbit line
         let asteroidOrbitLine = null;
         let impactMarker = null;
+
+        // Trail for asteroid
+        const asteroidTrailPoints = [];
+        const MAX_TRAIL_POINTS = 50;
+        let trailLine = null;
 
         // Asteroid data - initialize as null to prevent animation until data is loaded
         let asteroidData = null;
@@ -760,42 +1078,27 @@
             omega *= Math.PI / 180;
             w *= Math.PI / 180;
             M *= Math.PI / 180;
-            
+
             const E = solveKeplerEquation(M, e);
             const nu = calculateTrueAnomaly(E, e);
             const r = a * (1 - e * Math.cos(E));
-            
+
             const xOrb = r * Math.cos(nu);
             const yOrb = r * Math.sin(nu);
-            
+
             const cosW = Math.cos(w), sinW = Math.sin(w);
             const cosI = Math.cos(i), sinI = Math.sin(i);
             const cosOmega = Math.cos(omega), sinOmega = Math.sin(omega);
-            
+
             return {
-                x: (cosW * cosOmega - sinW * sinOmega * cosI) * xOrb + 
-                   (-sinW * cosOmega - cosW * sinOmega * cosI) * yOrb,
-                y: (cosW * sinOmega + sinW * cosOmega * cosI) * xOrb + 
-                   (-sinW * sinOmega + cosW * cosOmega * cosI) * yOrb,
+                x: (cosW * cosOmega - sinW * sinOmega * cosI) * xOrb +
+                    (-sinW * cosOmega - cosW * sinOmega * cosI) * yOrb,
+                y: (cosW * sinOmega + sinW * cosOmega * cosI) * xOrb +
+                    (-sinW * sinOmega + cosW * cosOmega * cosI) * yOrb,
                 z: (sinW * sinI) * xOrb + (cosW * sinI) * yOrb,
                 r: r,
                 nu: nu
             };
-        }
-
-        function createOrbitLine(a, e, i, omega, w, color, segments = 1200) {
-            const points = [];
-            for (let j = 0; j <= segments; j++) {
-                const M = (j / segments) * 2 * Math.PI;
-                const pos = orbitalToCartesian(a, e, i, omega, w, M * 180 / Math.PI);
-                points.push(pos.x, pos.y, pos.z);
-            }
-            const geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
-            return new THREE.Line(
-                geometry,
-                new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.8 })
-            );
         }
 
         function calculateOrbitalVelocity(r, a) {
@@ -804,25 +1107,51 @@
             return Math.sqrt(MU_SUN * (2 / rKm - 1 / aKm));
         }
 
+        // Update asteroid trail
+        function updateAsteroidTrail(position) {
+            asteroidTrailPoints.push(position.clone());
+            if (asteroidTrailPoints.length > MAX_TRAIL_POINTS) {
+                asteroidTrailPoints.shift();
+            }
+
+            if (trailLine) {
+                scene.remove(trailLine);
+            }
+
+            if (asteroidTrailPoints.length > 1) {
+                const trailGeometry = new THREE.BufferGeometry().setFromPoints(asteroidTrailPoints);
+                const trailMaterial = new THREE.LineBasicMaterial({
+                    color: 0xff6633,
+                    transparent: true,
+                    opacity: 0.5,
+                    linewidth: 2
+                });
+                trailLine = new THREE.Line(trailGeometry, trailMaterial);
+                scene.add(trailLine);
+            }
+        }
+
         // Fetch asteroid data from backend
         async function fetchAsteroidData() {
-          const asteroidId = JSON.parse(localStorage.getItem("asteroid")).id;
-          console.log(asteroidId)
-          document.getElementById('asteroid-id').innerHTML = asteroidId
+            const asteroidId = JSON.parse(localStorage.getItem("asteroid")).id;
+            console.log(asteroidId)
+            document.getElementById('asteroid-id').innerHTML = asteroidId
             document.getElementById('loading').style.display = 'block';
             document.getElementById('loading').textContent = '⏳ Fetching asteroid data...';
-            
+
             try {
-              console.log("trigger")
+                console.log("trigger")
                 const response = await fetch(`${BACKEND_URL}/asteroid/${asteroidId}`);
                 const data = await response.json();
-                
+                console.log(data)
+                localStorage.setItem("AstroData", JSON.stringify(data))
+
                 if (data.error) {
                     alert('Error: ' + data.error);
                     document.getElementById('loading').style.display = 'none';
                     return;
                 }
-                
+
                 // Update asteroid data
                 asteroidData = {
                     name: data.name,
@@ -840,16 +1169,16 @@
                     approachDate: data.close_approach?.date || 'N/A',
                     approachVelocity: parseFloat(data.close_approach?.relative_velocity_km_s) || 0
                 };
-                
+
                 isDataLoaded = true;
-                
+
                 updateAsteroidDisplay();
                 updateOrbitalInputs();
                 recomputeOrbit();
-                
+
                 // Hide loading screen
                 document.getElementById('loading').style.display = 'none';
-                
+
             } catch (error) {
                 alert('Failed to connect to backend: ' + error.message);
                 document.getElementById('loading').style.display = 'none';
@@ -858,7 +1187,7 @@
 
         function updateAsteroidDisplay() {
             if (!asteroidData) return;
-            
+
             document.getElementById('ast-name').textContent = asteroidData.name;
             document.getElementById('ast-id').textContent = asteroidData.id;
             document.getElementById('ast-class').textContent = asteroidData.orbitClass;
@@ -873,7 +1202,7 @@
 
         function updateOrbitalInputs() {
             if (!asteroidData) return;
-            
+
             document.getElementById('slider-a').value = asteroidData.a;
             document.getElementById('input-a').value = asteroidData.a;
             document.getElementById('slider-e').value = asteroidData.e;
@@ -890,22 +1219,29 @@
 
         function recomputeOrbit() {
             if (!asteroidData) return;
-            
+
             if (asteroidOrbitLine) scene.remove(asteroidOrbitLine);
-            
+
             const scaledA = asteroidData.a * AU_TO_UNITS;
-            asteroidOrbitLine = createOrbitLine(
+            asteroidOrbitLine = createBoldOrbitLine(
                 scaledA, asteroidData.e, asteroidData.i,
                 asteroidData.omega, asteroidData.w, 0xff6622
             );
             scene.add(asteroidOrbitLine);
-            
+
             const period = Math.pow(asteroidData.a, 1.5) * 365.25;
             document.getElementById('phys-period').textContent = period.toFixed(1) + ' days';
             document.getElementById('phys-motion').textContent = (360 / period).toFixed(2) + '°/day';
-            
+
             collisionDetected = false;
             collisionTime = -1;
+
+            // Clear trail
+            asteroidTrailPoints.length = 0;
+            if (trailLine) {
+                scene.remove(trailLine);
+                trailLine = null;
+            }
         }
 
         // Collision detection with parameter sensitivity
@@ -914,18 +1250,18 @@
                 alert('Please fetch asteroid data first!');
                 return;
             }
-            
+
             const samples = parseInt(document.getElementById('input-samples').value);
             const progressBar = document.getElementById('progress-bar');
             const progressFill = document.getElementById('progress-fill');
             const resultDiv = document.getElementById('collision-result');
-            
+
             progressBar.style.display = 'block';
             let collisions = 0;
             let impactLocations = [];
             let minDistance = Infinity;
             let criticalParams = { a: false, e: false, i: false, omega: false, w: false, M0: false };
-            
+
             // Test parameter sensitivity
             const paramTests = [
                 { param: 'a', delta: 0.001 },
@@ -935,62 +1271,60 @@
                 { param: 'w', delta: 0.5 },
                 { param: 'M0', delta: 0.5 }
             ];
-            
+
             paramTests.forEach(test => {
-                const testData = {...asteroidData};
+                const testData = { ...asteroidData };
                 testData[test.param] += test.delta;
-                
+
                 const scaledA = testData.a * AU_TO_UNITS;
                 for (let t = 0; t < 365.25 * 2; t += 5) {
                     const M = testData.M0 + (t / (Math.pow(testData.a, 1.5) * 365.25)) * 360;
                     const astPos = orbitalToCartesian(scaledA, testData.e, testData.i,
                         testData.omega, testData.w, M);
-                    
-                    const earthAngle = (t / 365.25) * 2 * Math.PI;
-                    const earthX = earthOrbitRadius * Math.cos(earthAngle);
-                    const earthZ = earthOrbitRadius * Math.sin(earthAngle);
-                    
+
+                    const earthM = (t / 365.25) * 360;
+                    const earthPos = orbitalToCartesian(earthOrbitRadius, earthEccentricity, 0, 0, 0, earthM);
+
                     const dist = Math.sqrt(
-                        Math.pow(astPos.x - earthX, 2) +
-                        Math.pow(astPos.y, 2) +
-                        Math.pow(astPos.z - earthZ, 2)
+                        Math.pow(astPos.x - earthPos.x, 2) +
+                        Math.pow(astPos.y - earthPos.y, 2) +
+                        Math.pow(astPos.z - earthPos.z, 2)
                     );
-                    
+
                     const distKm = (dist / AU_TO_UNITS) * AU_TO_KM;
                     if (distKm <= EARTH_RADIUS_KM * 10) {
                         criticalParams[test.param] = true;
                     }
                 }
             });
-            
+
             // Deterministic check
             const scaledA = asteroidData.a * AU_TO_UNITS;
             for (let t = 0; t < 365.25 * 2; t += 1) {
                 const M = asteroidData.M0 + (t / (Math.pow(asteroidData.a, 1.5) * 365.25)) * 360;
                 const astPos = orbitalToCartesian(scaledA, asteroidData.e, asteroidData.i,
                     asteroidData.omega, asteroidData.w, M);
-                
-                const earthAngle = (t / 365.25) * 2 * Math.PI;
-                const earthX = earthOrbitRadius * Math.cos(earthAngle);
-                const earthZ = earthOrbitRadius * Math.sin(earthAngle);
-                
+
+                const earthM = (t / 365.25) * 360;
+                const earthPos = orbitalToCartesian(earthOrbitRadius, earthEccentricity, 0, 0, 0, earthM);
+
                 const dist = Math.sqrt(
-                    Math.pow(astPos.x - earthX, 2) +
-                    Math.pow(astPos.y, 2) +
-                    Math.pow(astPos.z - earthZ, 2)
+                    Math.pow(astPos.x - earthPos.x, 2) +
+                    Math.pow(astPos.y - earthPos.y, 2) +
+                    Math.pow(astPos.z - earthPos.z, 2)
                 );
-                
+
                 minDistance = Math.min(minDistance, dist);
-                
+
                 const distKm = (dist / AU_TO_UNITS) * AU_TO_KM;
                 if (distKm <= EARTH_RADIUS_KM && collisionTime < 0) {
                     collisionTime = t;
                 }
             }
-            
+
             const minDistanceKm = (minDistance / AU_TO_UNITS) * AU_TO_KM;
             const willCollide = minDistanceKm <= EARTH_RADIUS_KM;
-            
+
             // Monte Carlo
             for (let i = 0; i < samples; i++) {
                 const perturbedData = {
@@ -1001,34 +1335,33 @@
                     w: asteroidData.w + (Math.random() - 0.5) * 0.5,
                     M0: asteroidData.M0 + (Math.random() - 0.5) * 0.5
                 };
-                
+
                 let sampleCollides = false;
                 for (let t = 0; t < 365.25 * 2 && !sampleCollides; t += 5) {
                     const M = perturbedData.M0 + (t / (Math.pow(perturbedData.a, 1.5) * 365.25)) * 360;
                     const scaledAPert = perturbedData.a * AU_TO_UNITS;
                     const astPos = orbitalToCartesian(scaledAPert, perturbedData.e, perturbedData.i,
                         perturbedData.omega, perturbedData.w, M);
-                    
-                    const earthAngle = (t / 365.25) * 2 * Math.PI;
-                    const earthX = earthOrbitRadius * Math.cos(earthAngle);
-                    const earthZ = earthOrbitRadius * Math.sin(earthAngle);
-                    
+
+                    const earthM = (t / 365.25) * 360;
+                    const earthPos = orbitalToCartesian(earthOrbitRadius, earthEccentricity, 0, 0, 0, earthM);
+
                     const dist = Math.sqrt(
-                        Math.pow(astPos.x - earthX, 2) +
-                        Math.pow(astPos.y, 2) +
-                        Math.pow(astPos.z - earthZ, 2)
+                        Math.pow(astPos.x - earthPos.x, 2) +
+                        Math.pow(astPos.y - earthPos.y, 2) +
+                        Math.pow(astPos.z - earthPos.z, 2)
                     );
-                    
+
                     const distKm = (dist / AU_TO_UNITS) * AU_TO_KM;
                     if (distKm <= EARTH_RADIUS_KM) {
                         sampleCollides = true;
                         collisions++;
-                        
-                        const impactX = astPos.x - earthX;
-                        const impactY = astPos.y;
-                        const impactZ = astPos.z - earthZ;
-                        const impactR = Math.sqrt(impactX*impactX + impactY*impactY + impactZ*impactZ);
-                        
+
+                        const impactX = astPos.x - earthPos.x;
+                        const impactY = astPos.y - earthPos.y;
+                        const impactZ = astPos.z - earthPos.z;
+                        const impactR = Math.sqrt(impactX * impactX + impactY * impactY + impactZ * impactZ);
+
                         const lat = Math.asin(impactY / impactR) * 180 / Math.PI;
                         const lon = Math.atan2(impactZ, impactX) * 180 / Math.PI;
                         impactLocations.push({ lat, lon, x: impactX, y: impactY, z: impactZ });
@@ -1036,21 +1369,21 @@
                 }
                 progressFill.style.width = ((i + 1) / samples * 100) + '%';
             }
-            
+
             const collisionProb = (collisions / samples) * 100;
-            
+
             // Display critical parameters
             const criticalParamsList = Object.keys(criticalParams).filter(k => criticalParams[k]);
-            let criticalParamsText = criticalParamsList.length > 0 
+            let criticalParamsText = criticalParamsList.length > 0
                 ? '<div class="impact-info"><strong>Sensitive Parameters:</strong> ' + criticalParamsList.join(', ') + '</div>'
                 : '';
-            
+
             if (willCollide || collisionProb > 0) {
                 collisionDetected = true;
-                const mass = (4/3) * Math.PI * Math.pow(asteroidData.diameter / 2, 3) * 2.67e12;
+                const mass = (4 / 3) * Math.PI * Math.pow(asteroidData.diameter / 2, 3) * 2.67e12;
                 const velocity = asteroidData.approachVelocity * 1000;
                 const energy = 0.5 * mass * velocity * velocity / 4.184e15;
-                
+
                 resultDiv.innerHTML = `
                     <div class="collision-warning">
                         <h3 style="color: #ff5252; margin-bottom: 10px;">⚠️ COLLISION DETECTED</h3>
@@ -1072,7 +1405,7 @@
                     </div>
                 `;
             }
-            
+
             setTimeout(() => {
                 progressBar.style.display = 'none';
                 progressFill.style.width = '0%';
@@ -1085,21 +1418,21 @@
                 alert('Please fetch asteroid data first!');
                 return;
             }
-            
+
             const aiResult = document.getElementById('ai-result');
             const aiText = document.getElementById('ai-text');
-            
+
             aiResult.style.display = 'block';
             aiText.innerHTML = 'Analyzing trajectory parameters...';
-            
+
             setTimeout(() => {
                 const period = Math.pow(asteroidData.a, 1.5) * 365.25;
                 const perihelion = asteroidData.a * (1 - asteroidData.e);
                 const aphelion = asteroidData.a * (1 + asteroidData.e);
-                
+
                 let riskLevel = 'LOW';
                 let riskColor = '#69f0ae';
-                
+
                 if (perihelion < 1.0) {
                     if (asteroidData.hazardous) {
                         riskLevel = 'HIGH';
@@ -1109,7 +1442,7 @@
                         riskColor = '#ffaa00';
                     }
                 }
-                
+
                 aiText.innerHTML = `
                     <p><strong>Orbit Classification:</strong> ${asteroidData.orbitClass}</p>
                     <p><strong>Risk Assessment:</strong> <span style="color: ${riskColor};">${riskLevel}</span></p>
@@ -1136,20 +1469,20 @@
                 this.updateCamera();
                 this.bindEvents();
             }
-            
+
             bindEvents() {
                 this.domElement.addEventListener('mousedown', this.onMouseDown.bind(this));
                 this.domElement.addEventListener('mousemove', this.onMouseMove.bind(this));
                 this.domElement.addEventListener('mouseup', this.onMouseUp.bind(this));
                 this.domElement.addEventListener('wheel', this.onWheel.bind(this));
             }
-            
+
             onMouseDown(e) {
                 this.isMouseDown = true;
                 this.mouseX = e.clientX;
                 this.mouseY = e.clientY;
             }
-            
+
             onMouseMove(e) {
                 if (!this.isMouseDown) return;
                 const deltaX = e.clientX - this.mouseX;
@@ -1161,17 +1494,17 @@
                 this.mouseX = e.clientX;
                 this.mouseY = e.clientY;
             }
-            
+
             onMouseUp() {
                 this.isMouseDown = false;
             }
-            
+
             onWheel(e) {
                 this.radius += e.deltaY * 0.5;
                 this.radius = Math.max(200, Math.min(2000, this.radius));
                 this.updateCamera();
             }
-            
+
             updateCamera() {
                 this.camera.position.x = this.radius * Math.sin(this.phi) * Math.cos(this.theta);
                 this.camera.position.y = this.radius * Math.cos(this.phi);
@@ -1187,7 +1520,7 @@
             icon.addEventListener('click', () => {
                 document.querySelectorAll('.feature-icon').forEach(i => i.classList.remove('active'));
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                
+
                 icon.classList.add('active');
                 const feature = icon.getAttribute('data-feature');
                 document.getElementById('section-' + feature).classList.add('active');
@@ -1198,7 +1531,7 @@
         function syncInputs(param) {
             const slider = document.getElementById(`slider-${param}`);
             const input = document.getElementById(`input-${param}`);
-            
+
             slider.addEventListener('input', () => {
                 input.value = slider.value;
                 if (asteroidData) {
@@ -1206,7 +1539,7 @@
                     asteroidData[key] = parseFloat(slider.value);
                 }
             });
-            
+
             input.addEventListener('input', () => {
                 slider.value = input.value;
                 if (asteroidData) {
@@ -1256,6 +1589,12 @@
             time = 0;
             collisionDetected = false;
             document.getElementById('collision-impact').style.display = 'none';
+            // Clear trail
+            asteroidTrailPoints.length = 0;
+            if (trailLine) {
+                scene.remove(trailLine);
+                trailLine = null;
+            }
         });
 
         document.getElementById('btn-continue').addEventListener('click', () => {
@@ -1270,12 +1609,12 @@
         // Navigation toggle
         const navToggle = document.getElementById('nav-toggle');
         const leftPanel = document.getElementById('left-panel');
-        
+
         navToggle.addEventListener('click', () => {
             leftPanel.classList.toggle('hidden');
             rightPanel.classList.toggle('expanded');
             navToggle.classList.toggle('active');
-            
+
             setTimeout(() => {
                 const width = rightPanel.offsetWidth;
                 const height = rightPanel.offsetHeight;
@@ -1324,19 +1663,34 @@
 
             // Only animate if data is loaded
             if (!isDataLoaded || !asteroidData) {
+                // Rotate sun and starfield even when paused
+                sunGroup.rotation.y += 0.001;
+                starfieldGroup.rotation.y += 0.0001;
                 renderer.render(scene, camera);
                 return;
             }
 
             if (!isPaused) {
-                // Update Earth position
-                const earthAngle = (time / 365.25) * 2 * Math.PI;
-                const earthE = solveKeplerEquation(earthAngle, earthEccentricity);
-                const earthR = earthOrbitRadius * (1 - earthEccentricity * Math.cos(earthE));
-                const earthNu = calculateTrueAnomaly(earthE, earthEccentricity);
-                earth.position.x = earthR * Math.cos(earthNu);
-                earth.position.z = earthR * Math.sin(earthNu);
+                // Update Earth position using the same orbital calculation as the orbit line
+                const earthM = (time / 365.25) * 360; // Mean anomaly in degrees
+                const earthPos = orbitalToCartesian(
+                    earthOrbitRadius,  // semi-major axis
+                    earthEccentricity, // eccentricity
+                    0,                 // inclination (Earth's reference plane)
+                    0,                 // RAAN
+                    0,                 // argument of periapsis
+                    earthM             // mean anomaly
+                );
+
+                // Move the container (orbital position)
+                earthContainer.position.x = earthPos.x;
+                earthContainer.position.y = earthPos.y;
+                earthContainer.position.z = earthPos.z;
+
+                // Rotate Earth on its tilted axis (daily rotation)
                 earth.rotation.y += 0.01;
+                clouds.rotation.y += 0.012;
+                clouds.rotation.z += 0.001;
 
                 // Update asteroid
                 const period = Math.pow(asteroidData.a, 1.5) * 365.25;
@@ -1344,19 +1698,23 @@
                 const scaledA = asteroidData.a * AU_TO_UNITS;
                 const astPos = orbitalToCartesian(scaledA, asteroidData.e, asteroidData.i,
                     asteroidData.omega, asteroidData.w, M);
-                
-                asteroid.position.set(astPos.x, astPos.y, astPos.z);
-                asteroid.rotation.y += 0.02;
 
-                // Check for collision
+                asteroidGroup.position.set(astPos.x, astPos.y, astPos.z);
+                asteroid.rotation.x += 0.02;
+                asteroid.rotation.y += 0.03;
+
+                // Update asteroid trail
+                updateAsteroidTrail(asteroidGroup.position);
+
+                // Check for collision (use earthContainer position)
                 const distToEarth = Math.sqrt(
-                    Math.pow(astPos.x - earth.position.x, 2) +
-                    Math.pow(astPos.y - earth.position.y, 2) +
-                    Math.pow(astPos.z - earth.position.z, 2)
+                    Math.pow(astPos.x - earthContainer.position.x, 2) +
+                    Math.pow(astPos.y - earthContainer.position.y, 2) +
+                    Math.pow(astPos.z - earthContainer.position.z, 2)
                 );
-                
+
                 const distToEarthKm = (distToEarth / AU_TO_UNITS) * AU_TO_KM;
-                
+
                 if (distToEarthKm <= EARTH_RADIUS_KM && collisionDetected) {
                     isPaused = true;
                     document.getElementById('collision-impact').style.display = 'block';
@@ -1364,16 +1722,22 @@
 
                 // Update HUD
                 const velocity = calculateOrbitalVelocity(astPos.r / AU_TO_UNITS, asteroidData.a);
-                
+
                 document.getElementById('hud-time').textContent = `Day ${Math.floor(time)}`;
                 document.getElementById('hud-anomaly').textContent = (astPos.nu * 180 / Math.PI).toFixed(2) + '°';
                 document.getElementById('hud-speed').textContent = velocity.toFixed(2) + ' km/s';
                 document.getElementById('hud-distance').textContent = ((distToEarth / AU_TO_UNITS) * AU_TO_KM / 1e6).toFixed(2) + ' million km';
                 document.getElementById('hud-radius').textContent = (astPos.r / AU_TO_UNITS).toFixed(3) + ' AU';
 
-                sun.rotation.y += 0.005;
+                sunGroup.rotation.y += 0.005;
+                sunGlow.material.opacity = 0.4 + Math.sin(time * 0.1) * 0.1;
+                sunCorona.material.opacity = 0.2 + Math.sin(time * 0.08) * 0.05;
+
                 time += timeSpeed;
             }
+
+            // Rotate starfield slowly
+            starfieldGroup.rotation.y += 0.0001;
 
             renderer.render(scene, camera);
         }
@@ -1389,5 +1753,132 @@
 
         animate();
     </script>
+    <script>
+        document.getElementById('getLatLon').onclick = async function () {
+            // Step 1: Get asteroid data from localStorage
+            const storedData = localStorage.getItem("AstroData");
+            if (!storedData) {
+                alert("No asteroid data found in localStorage!");
+                return;
+            }
+
+            const asteroid = JSON.parse(storedData);
+
+            // Step 2: Prepare parameters for /calculate_impact
+            const orbital = asteroid.orbital_elements;
+            const closeApproach = asteroid.close_approach;
+
+            // Make sure required fields exist
+            if (!orbital || !closeApproach) {
+                alert("Incomplete asteroid data!");
+                return;
+            }
+
+            const payload = {
+                a: parseFloat(orbital.a_au),
+                e: parseFloat(orbital.e),
+                i: parseFloat(orbital.i_deg),
+                Omega: parseFloat(orbital.raan_deg),
+                omega: parseFloat(orbital.arg_peri_deg),
+                M: parseFloat(orbital.mean_anomaly_deg),
+                v: parseFloat(closeApproach.relative_velocity_km_s)  // velocity in km/s
+            };
+
+            // Step 3: Send POST request to backend
+            try {
+                const response = await fetch('/calculate_impact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                // Step 4: Display lat/lon range
+                document.getElementById('result').innerHTML = `
+                    <h3>Impact Latitude & Longitude Range</h3>
+                    <p>Latitude: ${result.lat_range[0].toFixed(2)}° → ${result.lat_range[1].toFixed(2)}°</p>
+                    <p>Longitude: ${result.lon_range[0].toFixed(2)}° → ${result.lon_range[1].toFixed(2)}°</p>
+                    <p>Samples Used: ${result.sample_count}</p>
+                `;
+            } catch (err) {
+                console.error(err);
+                document.getElementById('result').innerHTML = "<p>Error fetching impact data!</p>";
+            }
+        };
+    </script>
+
+    <script>
+async function handleImpactClick() {
+    try {
+        // --- Fetch asteroid data from localStorage ---
+        const storedAstro = localStorage.getItem("AstroData");
+        if (!storedAstro) return alert("No asteroid data found in localStorage");
+        const asteroid = JSON.parse(storedAstro);
+
+        const orbital = asteroid.orbital_elements;
+        const physical = asteroid.physical;
+
+        // Prepare payload for /calculate_impact
+        const payload = {
+            a: parseFloat(orbital.a_au),
+            e: parseFloat(orbital.e),
+            i: parseFloat(orbital.i_deg),
+            Omega: parseFloat(orbital.raan_deg),
+            omega: parseFloat(orbital.arg_peri_deg),
+            M: parseFloat(orbital.mean_anomaly_deg),
+            v: parseFloat(asteroid.close_approach.relative_velocity_km_s || 25)
+        };
+
+        // --- Call Flask backend to get lat/lon range ---
+        const resCalc = await fetch('http://127.0.0.1:5000/calculate_impact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!resCalc.ok) throw new Error("Error calculating impact: " + resCalc.status);
+        const calcData = await resCalc.json();
+        console.log("Calculated Lat/Lon:", calcData);
+
+        // Pick median of range as impact point
+        const latImpact = (calcData.lat_range[0] + calcData.lat_range[1]) / 2;
+        const lonImpact = (calcData.lon_range[0] + calcData.lon_range[1]) / 2;
+
+        // --- Call Flask backend to generate HTML map ---
+        const mapRes = await fetch('http://127.0.0.1:5000/generate_impact_map', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                diameter_m: physical.diameter_max_km * 1000,  // convert km to meters
+                velocity_kms: payload.v,
+                density: 3000,
+                burst_altitude_m: 0,
+                lat: latImpact,
+                lon: lonImpact
+            })
+        });
+
+        if (!mapRes.ok) throw new Error("Error generating map: " + mapRes.status);
+        const mapHTML = await mapRes.text();
+
+        // --- Open map in new tab ---
+        const mapWindow = window.open();
+        mapWindow.document.write(mapHTML);
+        mapWindow.document.close();
+
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("impact");
+    btn.addEventListener("click", handleImpactClick);
+});
+</script>
+
 </body>
+
 </html>
